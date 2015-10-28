@@ -50,13 +50,6 @@ interface IRole
 	public function getParent();
 
 	/**
-	 * @param array $roles
-	 *
-	 * @return $this
-	 */
-	public function setChildren($roles);
-
-	/**
 	 * @return IRole[]
 	 */
 	public function getChildren();

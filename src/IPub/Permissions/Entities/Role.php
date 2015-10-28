@@ -78,20 +78,6 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function setChildren($roles)
-	{
-		if (!is_array($roles)) {
-			throw new Nette\InvalidArgumentException('You must provide array of children');
-		}
-
-		$this->children = array_merge($this->children, $roles);
-
-		return $this;
-	}
-
-	/**
 	 * @return IRole[]
 	 */
 	public function getChildren()
