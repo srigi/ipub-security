@@ -4,6 +4,5 @@ nette:
 			*: IPubTests\Permissions\*Presenter
 
 services:
-	# Test presenter
- 	presenters.test:
- 		class: IPubTests\Permissions\TestPresenter
+	presenters.test:
+		class: IPubTests\Permissions\TestPresenter

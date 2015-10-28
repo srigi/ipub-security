@@ -24,7 +24,7 @@ use IPub;
 use IPub\Permissions;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/RolesModel.php';
+require __DIR__ . '/../lib/RolesModel.php';
 
 class ExtensionTest extends Tester\TestCase
 {
@@ -38,7 +38,7 @@ class ExtensionTest extends Tester\TestCase
 
 		Permissions\DI\PermissionsExtension::register($config);
 
-		$config->addConfig(__DIR__ . '/files/config.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 
 		return $config->createContainer();
 	}
