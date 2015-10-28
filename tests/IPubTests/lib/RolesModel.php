@@ -13,38 +13,44 @@
  * @date		13.01.15
  */
 
-namespace IPubTests\Permissions;
+namespace IPubTests;
 
-use Nette;
-
-use IPub;
 use IPub\Permissions;
 use IPub\Permissions\Entities;
 
 class RolesModel implements Permissions\Models\IRolesModel
 {
 	/**
-	 * @return array|Entities\IRole[]
+	 * Roles & permissions are defined like this:
+	 *
+	 *  guest(Entities\IRole::ROLE_ANONYMOUS)              ---  firstResourceName:firstPrivilegeName
+	 *  authenticated(Entities\IRole::ROLE_AUTHENTICATED)  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
+	 *  administrator(Entities\IRole::ROLE_ADMINISTRATOR)  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName, thirdResourceName:thirdPrivilegeName
+	 *
+	 *  user-defined-role                                  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
+	 *  ├ user-defined-child-role
+	 *  └ user-defined-inherited-role                      ---  thirdResourceName:thirdPrivilegeName
+	 *    └ user-defined-inherited-inherited-role
+	 *
+	 * @return Entities\IRole[]
 	 */
 	public function findAll()
 	{
-		// Create guest role
 		$guest = (new Permissions\Entities\Role)
 			->setKeyName(Entities\IRole::ROLE_ANONYMOUS)
 			->setName('Guest')
 			->setPriority(0)
 			->setPermissions([
-				'firstResourceName:firstPrivilegeName'
+				'firstResourceName:firstPrivilegeName',
 			]);
 
-		// Create authenticated role
 		$authenticated = (new Permissions\Entities\Role)
 			->setKeyName(Entities\IRole::ROLE_AUTHENTICATED)
-			->setName('Registered user')
+			->setName('Authenticated')
 			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
-				'secondResourceName:secondPrivilegeName'
+				'secondResourceName:secondPrivilegeName',
 			]);
 
 		$administrator = (new Permissions\Entities\Role)
@@ -54,7 +60,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
-				'thirdResourceName:thirdPrivilegeName'
+				'thirdResourceName:thirdPrivilegeName',
 			]);
 
 		$customChild = (new Permissions\Entities\Role)
@@ -71,7 +77,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 			->setChildren([$customChild])
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
-				'thirdResourceName:thirdPrivilegeName'
+				'secondResourceName:secondPrivilegeName',
 			]);
 
 		$customInherited = (new Permissions\Entities\Role)
@@ -80,8 +86,16 @@ class RolesModel implements Permissions\Models\IRolesModel
 			->setPriority(0)
 			->setParent($custom)
 			->setPermissions([
+				'thirdResourceName:thirdPrivilegeName',
 			]);
 
+		$customInheritedInherited = (new Permissions\Entities\Role)
+			->setKeyName('user-defined-inherited-inherited-role')
+			->setName('Registered in custom role inheriting another role')
+			->setPriority(0)
+			->setParent($customInherited)
+			->setPermissions([
+			]);
 
 		return [
 			$guest,
@@ -90,6 +104,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 			$customChild,
 			$custom,
 			$customInherited,
+			$customInheritedInherited,
 		];
 	}
 }

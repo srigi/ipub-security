@@ -24,7 +24,7 @@ use IPub;
 use IPub\Permissions;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/RolesModel.php';
+require __DIR__ . '/../lib/RolesModel.php';
 
 class ExtensionTest extends Tester\TestCase
 {
