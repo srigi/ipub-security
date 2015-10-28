@@ -264,8 +264,8 @@ class AnnotationsTest extends Tester\TestCase
 
 		Permissions\DI\PermissionsExtension::register($config);
 
-		$config->addConfig(__DIR__ . '/files/config.neon', $config::NONE);
-		$config->addConfig(__DIR__ . '/files/presenters.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/presenters.neon', $config::NONE);
 
 		return $config->createContainer();
 	}
