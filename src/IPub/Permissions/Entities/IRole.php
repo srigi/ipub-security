@@ -42,7 +42,7 @@ interface IRole
 	 *
 	 * @return $this
 	 */
-	public function setParent(IRole $parent = NULL);
+	public function setParent(IRole $parent);
 
 	/**
 	 * @return IRole

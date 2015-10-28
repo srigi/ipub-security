@@ -62,7 +62,7 @@ class Role extends Nette\Object implements IRole
 	 * @param IRole $parent
 	 * @return $this
 	 */
-	public function setParent(IRole $parent = NULL)
+	public function setParent(IRole $parent)
 	{
 		$this->parent = $parent;
 
