@@ -1,40 +1,36 @@
 {
-	"name"			: "ipub/permissions",
-	"type"			: "library",
-	"description"	: "Simple permission checker for Nette Framework",
-	"keywords"		: ["nette", "permission", "acl", "tools", "ipub", "ipublikuj"],
-	"homepage"		: "https://github.com/iPublikuj/permissions",
-	"license"		: ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"name": "ipub/permissions",
+	"description": "Simple permission checker for Nette Framework",
+	"keywords": ["nette", "acl", "permission", "permissions", "library", "ipub"],
+	"type": "library",
+	"homepage": "https://github.com/iPublikuj/permissions",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 
 	"authors": [
 		{
-			"name"		: "iPublikuj:cms",
-			"email"		: "info@ipublikuj.eu",
-			"homepage"	: "http://www.ipublikuj.eu/"
+			"name": "iPublikuj:cms",
+			"email": "info@ipublikuj.eu",
+			"homepage": "http://www.ipublikuj.eu/"
 		}
 	],
 
 	"support": {
-		"email"		:"support@ipublikuj.eu",
-		"issues"	:"https://github.com/iPublikuj/permissions/issues"
+		"email": "support@ipublikuj.eu",
+		"issues": "https://github.com/iPublikuj/permissions/issues"
 	},
 
 	"require": {
-		"php"				: ">=5.4",
-		"nette/application"	: "~2.2",
-		"nette/di"			: "~2.2",
-		"nette/utils"		: "~2.2",
-		"latte/latte"		: "~2.2"
+		"php": ">=5.4",
+		"nette/di": "~2.2",
+		"nette/utils": "~2.2",
+		"latte/latte": "~2.2"
 	},
 
 	"require-dev": {
-		"nette/bootstrap"	: "~2.2",
-		"nette/mail"		: "~2.2",
-		"nette/robot-loader"	: "~2.2",
-		"nette/safe-stream"	: "~2.2",
-		"nette/tester"		: "@dev",
-		"tracy/tracy"		: "@dev",
-		"janmarek/mockista"	: "@dev"
+		"janmarek/mockista": "@dev",
+		"nette/bootstrap": "~2.2",
+		"nette/tester": "~1.6",
+		"tracy/tracy": "~2.2"
 	},
 
 	"autoload": {
