@@ -29,7 +29,7 @@ class Role extends Nette\Object implements IRole
 	protected $parent;
 
 	/**
-	 * @var array
+	 * @var IRole[]
 	 */
 	protected $children = [];
 
@@ -54,12 +54,13 @@ class Role extends Nette\Object implements IRole
 	protected $priority = 0;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	protected $permissions = [];
 
 	/**
-	 * {@inheritdoc}
+	 * @param IRole $parent
+	 * @return $this
 	 */
 	public function setParent(IRole $parent = NULL)
 	{
@@ -69,7 +70,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return IRole
 	 */
 	public function getParent()
 	{
@@ -91,7 +92,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return IRole[]
 	 */
 	public function getChildren()
 	{
@@ -99,7 +100,8 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param string $keyName
+	 * @return $this
 	 */
 	public function setKeyName($keyName)
 	{
@@ -109,7 +111,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
 	public function getKeyName()
 	{
@@ -117,7 +119,8 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param string $name
+	 * @return $this
 	 */
 	public function setName($name)
 	{
@@ -127,7 +130,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
 	public function getName()
 	{
@@ -135,7 +138,8 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param string $comment
+	 * @return $this
 	 */
 	public function setComment($comment)
 	{
@@ -145,7 +149,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
 	public function getComment()
 	{
@@ -153,7 +157,8 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param int $priority
+	 * @return $this
 	 */
 	public function setPriority($priority)
 	{
@@ -163,7 +168,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return int
 	 */
 	public function getPriority()
 	{
@@ -171,17 +176,10 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param array $permissions
+	 * @return $this
 	 */
-	public function getPermissions()
-	{
-		return $this->permissions;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setPermissions($permissions)
+	public function setPermissions(array $permissions)
 	{
 		$this->permissions = $permissions;
 
@@ -189,15 +187,8 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function hasPermission($permission)
-	{
-		return in_array((string) $permission, $this->permissions);
-	}
-
-	/**
-	 * {@inheritdoc}
+	 * @param string $permission
+	 * @return $this
 	 */
 	public function addPermission($permission)
 	{
@@ -207,7 +198,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return $this
 	 */
 	public function clearPermissions()
 	{
@@ -217,7 +208,24 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param string $permission
+	 * @return bool
+	 */
+	public function hasPermission($permission)
+	{
+		return in_array((string) $permission, $this->permissions);
+	}
+
+	/**
+	 * @return \string[]
+	 */
+	public function getPermissions()
+	{
+		return $this->permissions;
+	}
+
+	/**
+	 * @return bool
 	 */
 	public function isLocked()
 	{
@@ -225,7 +233,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return bool
 	 */
 	public function isAnonymous()
 	{
@@ -233,7 +241,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return bool
 	 */
 	public function isAuthenticated()
 	{
@@ -241,7 +249,7 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return bool
 	 */
 	public function isAdministrator()
 	{

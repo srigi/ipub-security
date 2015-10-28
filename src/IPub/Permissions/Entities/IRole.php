@@ -57,7 +57,7 @@ interface IRole
 	public function setChildren($roles);
 
 	/**
-	 * @return array
+	 * @return IRole[]
 	 */
 	public function getChildren();
 
@@ -110,32 +110,16 @@ interface IRole
 	public function getPriority();
 
 	/**
-	 * Returns permissions for the role.
+	 * Set permissions for the role
 	 *
-	 * @return string[]
-	 */
-	public function getPermissions();
-
-	/**
-	 * Add one permission to role
-	 *
-	 * @param string $permissions
+	 * @param array $permissions
 	 *
 	 * @return $this
 	 */
-	public function setPermissions($permissions);
+	public function setPermissions(array $permissions);
 
 	/**
-	 * Checks if a permission exists for this role.
-	 *
-	 * @param  string $permission
-	 *
-	 * @return bool
-	 */
-	public function hasPermission($permission);
-
-	/**
-	 * Adds a permission
+	 * Add one permission to the role
 	 *
 	 * @param string $permission
 	 */
@@ -147,6 +131,22 @@ interface IRole
 	 * @return $this
 	 */
 	public function clearPermissions();
+
+	/**
+	 * Checks if a permission is set for this role
+	 *
+	 * @param  string $permission
+	 *
+	 * @return bool
+	 */
+	public function hasPermission($permission);
+
+	/**
+	 * Returns permissions for the role
+	 *
+	 * @return string[]
+	 */
+	public function getPermissions();
 
 	/**
 	 * Check if role is one from system roles
