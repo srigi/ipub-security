@@ -22,6 +22,8 @@ use Tester\Assert;
 
 use IPub;
 use IPub\Permissions;
+use IPub\Permissions\Entities;
+use IPub\Permissions\Security;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../lib/RolesModel.php';
@@ -38,6 +40,7 @@ class PermissionsTest extends Tester\TestCase
 	 */
 	private $permission;
 
+
 	/**
 	 * @return array[]|array
 	 */
@@ -45,22 +48,23 @@ class PermissionsTest extends Tester\TestCase
 	{
 		return [
 			['firstResourceName:firstPrivilegeName', [
-				'title'			=> 'This is example title',
-				'description'	=> 'This is example description'
+				'title' => 'This is example title',
+				'description' => 'This is example description'
 			]],
-			[(new Permissions\Entities\Permission('secondResource', 'secondPrivilege', [
-					'title'			=> 'This is second example title',
-					'description'	=> 'This is second example description'
-				])), NULL
-			],
+			[(new Permissions\Entities\Permission('secondResourceName', 'secondPrivilegeName', [
+				'title' => 'This is second example title',
+				'description' => 'This is second example description'
+			])), NULL],
 			[
 				[
-					'resource'	=> 'thirdResourceName',
-					'privilege'	=> 'thirdPrivilegeName'
-				]
+					'resource' => 'thirdResourceName',
+					'privilege' => 'thirdPrivilegeName'
+				],
+				NULL,
 			]
 		];
 	}
+
 
 	/**
 	 * @return array[]|array
@@ -69,17 +73,33 @@ class PermissionsTest extends Tester\TestCase
 	{
 		return [
 			['wrongStringVersion', [
-				'title'			=> 'This is example title',
-				'description'	=> 'This is example description'
+				'title' => 'This is example title',
+				'description' => 'This is example description'
 			]],
 			[
 				[
-					'resource'	=> 'thirdResourceName',
-					'wrongKey'	=> 'thirdPrivilegeName'
+					'resource' => 'thirdResourceName',
+					'wrongKey' => 'thirdPrivilegeName'
 				]
 			]
 		];
 	}
+
+
+	/**
+	 * @return Nette\DI\Container
+	 */
+	protected function createContainer()
+	{
+		$config = new Nette\Configurator();
+		$config->setTempDirectory(TEMP_DIR);
+		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+
+		Permissions\DI\PermissionsExtension::register($config);
+
+		return $config->createContainer();
+	}
+
 
 	/**
 	 * Set up
@@ -89,13 +109,10 @@ class PermissionsTest extends Tester\TestCase
 		parent::setUp();
 
 		$dic = $this->createContainer();
-
-		// Get roles model services
 		$this->rolesModel = $dic->getService('models.roles');
-
-		// Get permissions service
 		$this->permission = $dic->getService('permissions.permissions');
 	}
+
 
 	/**
 	 * @dataProvider dataValidPermissions
@@ -105,10 +122,36 @@ class PermissionsTest extends Tester\TestCase
 	 */
 	public function testRegisteringPermissions($permission, array $details = NULL)
 	{
-		$obj = $this->permission->addPermission($permission, $details);
+		$this->permission->addPermission($permission, $details);
+		$registeredPermissions = $this->permission->getPermissions();
 
-		Assert::true($obj instanceof IPub\Permissions\Security\Permission);
+		if (is_string($permission)) {
+			list($resource, $privilege) = explode(Security\Permission::DELIMITER, $permission);
+		}
+		else if (is_array($permission)) {
+			$resource = $permission['resource'];
+			$privilege = $permission['privilege'];
+		}
+		else if ($permission instanceof Entities\IPermission) {
+			$resource = $permission->getResource();
+			$privilege = $permission->getPrivilege();
+		}
+
+		Assert::noError(function() use ($registeredPermissions, $resource, $privilege) {
+			$searchPermission = $resource . Security\Permission::DELIMITER . $privilege;
+
+			foreach ($registeredPermissions as $key => $registeredPermission) {
+				if ($key === $searchPermission) {
+					return;
+				}
+			}
+
+			throw new Tester\AssertException("Unable to find permission in registered permissions", $searchPermission, NULL);
+		});
+
+		Assert::contains($resource, $this->permission->getResources(), 'Resource registered in ACL system');
 	}
+
 
 	/**
 	 * @dataProvider dataInvalidPermissions
@@ -123,20 +166,27 @@ class PermissionsTest extends Tester\TestCase
 		$this->permission->addPermission($permission, $details);
 	}
 
-	/**
-	 * @return \SystemContainer|\Nette\DI\Container
-	 */
-	protected function createContainer()
+
+	public function testRolePermissions()
 	{
-		$config = new Nette\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
+		foreach ($this->dataValidPermissions() as $permissionPair) {
+			list($permission, $detail) = $permissionPair;
+			$this->permission->addPermission($permission, $detail);
+		}
 
-		Permissions\DI\PermissionsExtension::register($config);
+		Assert::true($this->permission->isAllowed('guest', 'firstResourceName', 'firstPrivilegeName'));
+		Assert::false($this->permission->isAllowed('guest', 'secondResourceName', 'secondPrivilegeName'));
+		Assert::false($this->permission->isAllowed('guest', 'thirdResourceName', 'thirdPrivilegeName'));
 
-		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+		Assert::true($this->permission->isAllowed('authenticated', 'firstResourceName', 'firstPrivilegeName'));
+		Assert::true($this->permission->isAllowed('authenticated', 'secondResourceName', 'secondPrivilegeName'));
+		Assert::false($this->permission->isAllowed('authenticated', 'thirdResourceName', 'thirdPrivilegeName'));
 
-		return $config->createContainer();
+		Assert::true($this->permission->isAllowed('administrator', 'firstResourceName', 'firstPrivilegeName'));
+		Assert::true($this->permission->isAllowed('administrator', 'secondResourceName', 'secondPrivilegeName'));
+		Assert::true($this->permission->isAllowed('administrator', 'thirdResourceName', 'thirdPrivilegeName'));
 	}
 }
+
 
 \run(new PermissionsTest());
