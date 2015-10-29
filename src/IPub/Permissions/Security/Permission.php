@@ -24,8 +24,7 @@ use IPub\Permissions\Access;
 use IPub\Permissions\Entities;
 use IPub\Permissions\Exceptions;
 use IPub\Permissions\Models;
-use IPub\Permissions\Templating;
-use Tracy\Debugger;
+
 
 class Permission extends NS\Permission implements NS\IAuthorizator
 {
@@ -46,12 +45,11 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 	 */
 	protected $roles = [];
 
+
 	/**
 	 * @param Models\IRolesModel $rolesModel
 	 */
-	public function __construct(
-		Models\IRolesModel $rolesModel
-	) {
+	public function __construct(Models\IRolesModel $rolesModel) {
 		// Get all available roles
 		$roles = $rolesModel->findAll();
 
@@ -70,6 +68,7 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 			}
 		}
 	}
+
 
 	/**
 	 * @param string|array $permission
@@ -137,6 +136,7 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 
 		return $this;
 	}
+
 
 	/**
 	 * Get all registered permissions

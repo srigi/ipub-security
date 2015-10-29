@@ -22,6 +22,7 @@ use Tester\Assert;
 
 use IPub;
 use IPub\Permissions;
+use IPubTests;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../lib/RolesModel.php';
@@ -29,19 +30,19 @@ require __DIR__ . '/../lib/RolesModel.php';
 class ExtensionTest extends Tester\TestCase
 {
 	/**
-	 * @return \SystemContainer|\Nette\DI\Container
+	 * @return Nette\DI\Container
 	 */
 	protected function createContainer()
 	{
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
+		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 
 		Permissions\DI\PermissionsExtension::register($config);
 
-		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
-
 		return $config->createContainer();
 	}
+
 
 	public function testFunctional()
 	{
@@ -53,5 +54,6 @@ class ExtensionTest extends Tester\TestCase
 		Assert::true($dic->getService('permissions.checkers.link') instanceof IPub\Permissions\Access\LinkChecker);
 	}
 }
+
 
 \run(new ExtensionTest());

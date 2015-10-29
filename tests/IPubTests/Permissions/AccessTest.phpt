@@ -215,7 +215,7 @@ class AccessTest extends Tester\TestCase
 	 *
 	 * @throws Nette\Application\ForbiddenRequestException
 	 */
-	public function testNotAllowedLoddedIn($username, $password)
+	public function testNotAllowedLoggedIn($username, $password)
 	{
 		// Create test presenter
 		$presenter = $this->createPresenter();
