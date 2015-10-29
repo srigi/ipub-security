@@ -65,6 +65,7 @@ class Role extends Nette\Object implements IRole
 	public function setParent(IRole $parent)
 	{
 		$this->parent = $parent;
+		$parent->addChildren($this);
 
 		return $this;
 	}
@@ -75,6 +76,14 @@ class Role extends Nette\Object implements IRole
 	public function getParent()
 	{
 		return $this->parent;
+	}
+
+	/**
+	 * @param IRole $children
+	 */
+	protected function addChildren(IRole $children)
+	{
+		array_push($this->children, $children);
 	}
 
 	/**
