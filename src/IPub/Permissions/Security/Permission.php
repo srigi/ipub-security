@@ -63,6 +63,11 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 
 			// & store role in object for future use
 			$this->roles[$role->getKeyName()] = $role;
+
+			// Allow all privileges for administrator
+			if ($role->isAdministrator()) {
+				$this->allow($role->getKeyName());
+			}
 		}
 	}
 
@@ -125,16 +130,8 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 		}
 
 		foreach ($this->roles as $role) {
-			// Allow all privileges for administrator
-			if ($role->isAdministrator()) {
-				$this->allow($role->getKeyName(), self::ALL, self::ALL);
-
-			// For others apply setup privileges
-			} else {
-				// This combination role-resource-privilege is allowed
-				if ($role->hasPermission($permission)) {
-					$this->allow($role->getKeyName(), $resource, $privilege);
-				}
+			if (!$role->isAdministrator() && $role->hasPermission($permission)) {
+				$this->allow($role->getKeyName(), $resource, $privilege);
 			}
 		}
 
