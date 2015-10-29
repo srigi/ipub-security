@@ -38,15 +38,31 @@ class InheritanceTest extends Tester\TestCase
 	 */
 	private $permission;
 
+
 	/**
-	 * @return array[]|array
+	 * @return Nette\DI\Container
+	 */
+	protected function createContainer()
+	{
+		$config = new Nette\Configurator();
+		$config->setTempDirectory(TEMP_DIR);
+		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+
+		Permissions\DI\PermissionsExtension::register($config);
+
+		return $config->createContainer();
+	}
+
+
+	/**
+	 * @return string[]
 	 */
 	public function dataValidPermissions()
 	{
 		return [
-			['firstResourceName:firstPrivilegeName', []],
-			[(new Permissions\Entities\Permission('secondResource', 'secondPrivilege', [])), NULL],
-			['thirdResourceName:thirdPrivilegeName', NULL],
+			'firstResourceName:firstPrivilegeName',
+			'secondResourceName:secondPrivilegeName',
+			'thirdResourceName:thirdPrivilegeName',
 		];
 	}
 
@@ -60,16 +76,64 @@ class InheritanceTest extends Tester\TestCase
 
 		$dic = $this->createContainer();
 
-		// Get roles model services
 		$this->rolesModel = $dic->getService('models.roles');
-
-		// Get permissions service
 		$this->permission = $dic->getService('permissions.permissions');
 
 		foreach ($this->dataValidPermissions() as $permission) {
-			list($permission, $details) = $permission;
-			$this->permission->addPermission($permission, $details);
+			$this->permission->addPermission($permission);
 		}
+	}
+
+
+	public function testRolesModelHierarchy()
+	{
+		$allRoles = $this->rolesModel->findAll();
+
+		Assert::null($allRoles[0]->getParent(), 'Guest does not have parent');
+		Assert::count(0, $allRoles[0]->getChildren(), 'Guest does not have any children');
+
+		Assert::null($allRoles[1]->getParent(), 'Authenticated does not have parent');
+		Assert::count(0, $allRoles[1]->getChildren(), 'Authenticated does not have any children');
+
+		Assert::null($allRoles[2]->getParent(), 'Administrator does not have parent');
+		Assert::count(0, $allRoles[2]->getChildren(), 'Administrator does not have any children');
+
+		Assert::null($allRoles[3]->getParent(), 'user-defined-role does not have parent');
+		Assert::count(2, $allRoles[3]->getChildren(), 'user-defined-role does have 2 children');
+
+		Assert::equal($allRoles[3], $allRoles[4]->getParent(), 'user-defined-role is parent role of user-defined-child-role');
+		Assert::count(0, $allRoles[4]->getChildren(), 'user-defined-child-role does not have any children');
+
+		Assert::equal($allRoles[3], $allRoles[5]->getParent(), 'user-defined-role is parent role of user-defined-inherited-role');
+		Assert::count(1, $allRoles[5]->getChildren(), 'user-defined-inherited-role does have 1 children');
+
+		Assert::equal($allRoles[5], $allRoles[6]->getParent(), 'user-defined-inherited-role is parent role of user-defined-inherited-inherited-role');
+		Assert::count(0, $allRoles[6]->getChildren(), 'user-defined-inherited-inherited-role does not have any children');
+	}
+
+
+	public function testPermissionRolesHierarchy()
+	{
+		Assert::equal($this->permission->getRoleParents('guest'), array(), 'Guest does not have parent');
+
+		Assert::equal($this->permission->getRoleParents('authenticated'), array(), 'Authenticated does not have parent');
+
+		Assert::equal($this->permission->getRoleParents('administrator'), array(), 'Administrator does not have parent');
+
+		Assert::equal($this->permission->getRoleParents('user-defined-role'), array(), 'user-defined-role does not have parent');
+
+		Assert::equal($this->permission->getRoleParents('user-defined-child-role'), array('user-defined-role'),
+			'user-defined-role is parent role of user-defined-child-role');
+
+		Assert::equal($this->permission->getRoleParents('user-defined-inherited-role'), array('user-defined-role'),
+			'user-defined-role is parent role of user-defined-inherited-role');
+
+		Assert::equal($this->permission->getRoleParents('user-defined-inherited-inherited-role'), array('user-defined-inherited-role'),
+			'user-defined-inherited-role is parent role of user-defined-inherited-inherited-role');
+		Assert::true($this->permission->roleInheritsFrom('user-defined-inherited-inherited-role', 'user-defined-inherited-role'),
+			'user-defined-inherited-inherited-role inherits from user-defined-inherited-role');
+		Assert::true($this->permission->roleInheritsFrom('user-defined-inherited-inherited-role', 'user-defined-role'),
+			'user-defined-inherited-inherited-role inherits also from user-defined-role');
 	}
 
 
@@ -83,22 +147,6 @@ class InheritanceTest extends Tester\TestCase
 	{
 		Assert::true($this->permission->isAllowed('user-defined-role', 'firstResourceName', 'firstPrivilegeName'));
 		Assert::true($this->permission->isAllowed('user-defined-inherited-role', 'firstResourceName', 'firstPrivilegeName'));
-	}
-
-
-	/**
-	 * @return \SystemContainer|\Nette\DI\Container
-	 */
-	protected function createContainer()
-	{
-		$config = new Nette\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
-
-		Permissions\DI\PermissionsExtension::register($config);
-
-		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
-
-		return $config->createContainer();
 	}
 }
 
