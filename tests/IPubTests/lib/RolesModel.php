@@ -25,7 +25,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 	 *
 	 *  guest(Entities\IRole::ROLE_ANONYMOUS)              ---  firstResourceName:firstPrivilegeName
 	 *  authenticated(Entities\IRole::ROLE_AUTHENTICATED)  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
-	 *  administrator(Entities\IRole::ROLE_ADMINISTRATOR)  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName, thirdResourceName:thirdPrivilegeName
+	 *  administrator(Entities\IRole::ROLE_ADMINISTRATOR)
 	 *
 	 *  user-defined-role                                  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
 	 *  ├ user-defined-child-role
@@ -56,12 +56,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 		$administrator = (new Permissions\Entities\Role)
 			->setKeyName(Entities\IRole::ROLE_ADMINISTRATOR)
 			->setName('Administrator')
-			->setPriority(0)
-			->setPermissions([
-				'firstResourceName:firstPrivilegeName',
-				'secondResourceName:secondPrivilegeName',
-				'thirdResourceName:thirdPrivilegeName',
-			]);
+			->setPriority(0);
 
 		$custom = (new Permissions\Entities\Role)
 			->setKeyName('user-defined-role')
@@ -76,9 +71,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 			->setKeyName('user-defined-child-role')
 			->setName('Registered in custom role as children of another role')
 			->setPriority(0)
-			->setParent($custom)
-			->setPermissions([
-			]);
+			->setParent($custom);
 
 		$customInherited = (new Permissions\Entities\Role)
 			->setKeyName('user-defined-inherited-role')
@@ -93,9 +86,7 @@ class RolesModel implements Permissions\Models\IRolesModel
 			->setKeyName('user-defined-inherited-inherited-role')
 			->setName('Registered in custom role inheriting another role')
 			->setPriority(0)
-			->setParent($customInherited)
-			->setPermissions([
-			]);
+			->setParent($customInherited);
 
 		return [
 			$guest,
