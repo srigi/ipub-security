@@ -1,8 +1,8 @@
 nette:
 	application:
 		mapping:
-			*: IPubTests\Permissions\*Presenter
+			*: IPubTests\Security\*Presenter
 
 services:
 	presenters.test:
-		class: IPubTests\Permissions\TestPresenter
+		class: IPubTests\Security\TestPresenter
