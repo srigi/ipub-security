@@ -52,6 +52,7 @@ class ExtensionTest extends Tester\TestCase
 		Assert::true($dic->getService('permissions.checkers.annotation') instanceof IPub\Permissions\Access\AnnotationChecker);
 		Assert::true($dic->getService('permissions.checkers.latte') instanceof IPub\Permissions\Access\LatteChecker);
 		Assert::true($dic->getService('permissions.checkers.link') instanceof IPub\Permissions\Access\LinkChecker);
+		Assert::true($dic->getService('models.roles') instanceof IPubTests\RolesModel);
 	}
 }
 
