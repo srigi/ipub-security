@@ -35,11 +35,6 @@ class Role extends Nette\Object implements IRole
 	protected $children = [];
 
 	/**
-	 * @var int
-	 */
-	protected $priority = 0;
-
-	/**
 	 * @var string
 	 */
 	protected $comment;
@@ -119,25 +114,6 @@ class Role extends Nette\Object implements IRole
 	public function getComment()
 	{
 		return $this->comment;
-	}
-
-	/**
-	 * @param int $priority
-	 * @return $this
-	 */
-	public function setPriority($priority)
-	{
-		$this->priority = (int) $priority;
-
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getPriority()
-	{
-		return $this->priority;
 	}
 
 	/**

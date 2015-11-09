@@ -37,41 +37,34 @@ class RolesModel implements Permissions\Models\IRolesModel
 	public function findAll()
 	{
 		$guest = (new Permissions\Entities\Role(Entities\IRole::ROLE_ANONYMOUS))
-			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 			]);
 
 		$authenticated = (new Permissions\Entities\Role(Entities\IRole::ROLE_AUTHENTICATED))
-			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
-		$administrator = (new Permissions\Entities\Role(Entities\IRole::ROLE_ADMINISTRATOR))
-			->setPriority(0);
+		$administrator = (new Permissions\Entities\Role(Entities\IRole::ROLE_ADMINISTRATOR));
 
 		$employee = (new Permissions\Entities\Role('employee'))
-			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
 		$sales = (new Permissions\Entities\Role('sales'))
-			->setPriority(0)
 			->setParent($employee);
 
 		$engineer = (new Permissions\Entities\Role('engineer'))
-			->setPriority(0)
 			->setParent($employee)
 			->setPermissions([
 				'thirdResourceName:thirdPrivilegeName',
 			]);
 
 		$backendEngineer = (new Permissions\Entities\Role('backend-engineer'))
-			->setPriority(0)
 			->setParent($engineer);
 
 		return [

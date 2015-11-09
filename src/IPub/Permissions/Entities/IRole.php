@@ -73,18 +73,6 @@ interface IRole
 	public function getComment();
 
 	/**
-	 * @param int $priority
-	 *
-	 * @return $this
-	 */
-	public function setPriority($priority);
-
-	/**
-	 * @return int
-	 */
-	public function getPriority();
-
-	/**
 	 * Set permissions for the role
 	 *
 	 * @param array $permissions
