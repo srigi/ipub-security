@@ -1,23 +1,33 @@
 {
-	"name": "ipub/permissions",
-	"description": "Simple permission checker for Nette Framework",
-	"keywords": ["nette", "acl", "permission", "permissions", "library", "ipub"],
+	"name": "srigi/ipub-security",
+	"description": "ACL permissions checker for Nette Framework",
+	"keywords": [
+		"nette",
+		"acl",
+		"annotation",
+		"annotations",
+		"permission",
+		"permissions",
+		"library"
+	],
 	"type": "library",
-	"homepage": "https://github.com/iPublikuj/permissions",
-	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
-
+	"homepage": "https://github.com/srigi/ipub-security",
+	"license": [
+		"BSD-3-Clause",
+		"GPL-2.0",
+		"GPL-3.0"
+	],
 	"authors": [
+		{
+			"name": "Igor Hlina",
+			"homepage": "http://www.srigi.sk/"
+		},
 		{
 			"name": "iPublikuj:cms",
 			"email": "info@ipublikuj.eu",
 			"homepage": "http://www.ipublikuj.eu/"
 		}
 	],
-
-	"support": {
-		"email": "support@ipublikuj.eu",
-		"issues": "https://github.com/iPublikuj/permissions/issues"
-	},
 
 	"require": {
 		"php": ">=5.4",
