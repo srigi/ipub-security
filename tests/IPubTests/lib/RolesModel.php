@@ -1,6 +1,5 @@
 <?php
 /**
- * Test: IPub\Permissions\Extension
  * @testCase
  *
  * @copyright	More in license.md
@@ -15,10 +14,10 @@
 
 namespace IPubTests;
 
-use IPub\Permissions;
-use IPub\Permissions\Entities;
+use IPub\Security;
+use IPub\Security\Entities;
 
-class RolesModel implements Permissions\Models\IRolesModel
+class RolesModel implements Security\Models\IRolesModel
 {
 	/**
 	 * Roles & permissions are defined like this:
@@ -27,75 +26,54 @@ class RolesModel implements Permissions\Models\IRolesModel
 	 *  authenticated(Entities\IRole::ROLE_AUTHENTICATED)  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
 	 *  administrator(Entities\IRole::ROLE_ADMINISTRATOR)
 	 *
-	 *  user-defined-role                                  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
-	 *  ├ user-defined-child-role
-	 *  └ user-defined-inherited-role                      ---  thirdResourceName:thirdPrivilegeName
-	 *    └ user-defined-inherited-inherited-role
+	 *  Employee                                           ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
+	 *  ├ Sales
+	 *  └ Engineer                                         ---  thirdResourceName:thirdPrivilegeName
+	 *    └ Backend-engineer
 	 *
 	 * @return Entities\IRole[]
 	 */
 	public function findAll()
 	{
-		$guest = (new Permissions\Entities\Role)
-			->setKeyName(Entities\IRole::ROLE_ANONYMOUS)
-			->setName('Guest')
-			->setPriority(0)
+		$guest = (new Security\Entities\Role(Entities\IRole::ROLE_ANONYMOUS))
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 			]);
 
-		$authenticated = (new Permissions\Entities\Role)
-			->setKeyName(Entities\IRole::ROLE_AUTHENTICATED)
-			->setName('Authenticated')
-			->setPriority(0)
+		$authenticated = (new Security\Entities\Role(Entities\IRole::ROLE_AUTHENTICATED))
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
-		$administrator = (new Permissions\Entities\Role)
-			->setKeyName(Entities\IRole::ROLE_ADMINISTRATOR)
-			->setName('Administrator')
-			->setPriority(0);
+		$administrator = (new Security\Entities\Role(Entities\IRole::ROLE_ADMINISTRATOR));
 
-		$custom = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-role')
-			->setName('Registered in custom role')
-			->setPriority(0)
+		$employee = (new Security\Entities\Role('employee'))
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
-		$customChild = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-child-role')
-			->setName('Registered in custom role as children of another role')
-			->setPriority(0)
-			->setParent($custom);
+		$sales = (new Security\Entities\Role('sales'))
+			->setParent($employee);
 
-		$customInherited = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-inherited-role')
-			->setName('Registered in custom role inheriting another role')
-			->setPriority(0)
-			->setParent($custom)
+		$engineer = (new Security\Entities\Role('engineer'))
+			->setParent($employee)
 			->setPermissions([
 				'thirdResourceName:thirdPrivilegeName',
 			]);
 
-		$customInheritedInherited = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-inherited-inherited-role')
-			->setName('Registered in custom role inheriting another role')
-			->setPriority(0)
-			->setParent($customInherited);
+		$backendEngineer = (new Security\Entities\Role('backend-engineer'))
+			->setParent($engineer);
 
 		return [
 			$guest,
 			$authenticated,
 			$administrator,
-			$custom,
-			$customChild,
-			$customInherited,
-			$customInheritedInherited,
+			$employee,
+			$sales,
+			$engineer,
+			$backendEngineer,
 		];
 	}
 }
