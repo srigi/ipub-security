@@ -60,12 +60,10 @@ class PermissionsExtension extends DI\CompilerExtension
 				$service->addSetup('addPermission', array($permission, $details));
 			}
 		}
-		
+
 		// Install extension latte macros
 		$latteFactory = $builder->getDefinition($builder->getByType('\Nette\Bridges\ApplicationLatte\ILatteFactory') ?: 'nette.latteFactory');
-		
-		$latteFactory
-			->addSetup('IPub\Security\Latte\Macros::install(?->getCompiler())', array('@self'));
+		$latteFactory->addSetup('IPub\Security\Latte\Macros::install(?->getCompiler())', array('@self'));
 	}
 
 	/**

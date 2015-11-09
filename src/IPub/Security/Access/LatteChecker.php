@@ -21,7 +21,7 @@ use Nette\Security as NS;
 use IPub;
 use IPub\Security;
 use IPub\Security\Exceptions;
-use Tracy\Debugger;
+
 
 class LatteChecker extends Nette\Object implements IChecker
 {
