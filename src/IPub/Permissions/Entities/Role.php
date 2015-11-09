@@ -16,12 +16,13 @@ namespace IPub\Permissions\Entities;
 
 use Nette;
 
+
 class Role extends Nette\Object implements IRole
 {
 	/**
-	 * @var int
+	 * @var string
 	 */
-	protected $id;
+	protected $name;
 
 	/**
 	 * @var IRole
@@ -34,14 +35,9 @@ class Role extends Nette\Object implements IRole
 	protected $children = [];
 
 	/**
-	 * @var string
+	 * @var int
 	 */
-	protected $keyName;
-
-	/**
-	 * @var string
-	 */
-	protected $name;
+	protected $priority = 0;
 
 	/**
 	 * @var string
@@ -49,14 +45,26 @@ class Role extends Nette\Object implements IRole
 	protected $comment;
 
 	/**
-	 * @var int
-	 */
-	protected $priority = 0;
-
-	/**
 	 * @var string[]
 	 */
 	protected $permissions = [];
+
+
+	/**
+	 * @param string $name
+	 */
+	public function __construct($name)
+	{
+		$this->name = $name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
 
 	/**
 	 * @param IRole $parent
@@ -92,44 +100,6 @@ class Role extends Nette\Object implements IRole
 	public function getChildren()
 	{
 		return $this->children;
-	}
-
-	/**
-	 * @param string $keyName
-	 * @return $this
-	 */
-	public function setKeyName($keyName)
-	{
-		$this->keyName = (string) $keyName;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getKeyName()
-	{
-		return $this->keyName;
-	}
-
-	/**
-	 * @param string $name
-	 * @return $this
-	 */
-	public function setName($name)
-	{
-		$this->name = (string) $name;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->name;
 	}
 
 	/**
@@ -224,7 +194,7 @@ class Role extends Nette\Object implements IRole
 	 */
 	public function isLocked()
 	{
-		return in_array($this->keyName, [self::ROLE_ANONYMOUS, self::ROLE_AUTHENTICATED, self::ROLE_ADMINISTRATOR]);
+		return in_array($this->name, [self::ROLE_ANONYMOUS, self::ROLE_AUTHENTICATED, self::ROLE_ADMINISTRATOR]);
 	}
 
 	/**
@@ -232,7 +202,7 @@ class Role extends Nette\Object implements IRole
 	 */
 	public function isAnonymous()
 	{
-		return $this->keyName == self::ROLE_ANONYMOUS;
+		return $this->name == self::ROLE_ANONYMOUS;
 	}
 
 	/**
@@ -240,7 +210,7 @@ class Role extends Nette\Object implements IRole
 	 */
 	public function isAuthenticated()
 	{
-		return $this->keyName == self::ROLE_AUTHENTICATED;
+		return $this->name == self::ROLE_AUTHENTICATED;
 	}
 
 	/**
@@ -248,7 +218,7 @@ class Role extends Nette\Object implements IRole
 	 */
 	public function isAdministrator()
 	{
-		return $this->keyName == self::ROLE_ADMINISTRATOR;
+		return $this->name == self::ROLE_ADMINISTRATOR;
 	}
 
 	/**

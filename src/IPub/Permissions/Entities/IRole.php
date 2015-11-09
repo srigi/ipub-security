@@ -37,6 +37,12 @@ interface IRole
 	 */
 	const ROLE_ADMINISTRATOR = 'administrator';
 
+
+	/**
+	 * @return string
+	 */
+	public function getName();
+
 	/**
 	 * @param IRole $parent
 	 *
@@ -53,30 +59,6 @@ interface IRole
 	 * @return IRole[]
 	 */
 	public function getChildren();
-
-	/**
-	 * @param string $keyName
-	 *
-	 * @return $this
-	 */
-	public function setKeyName($keyName);
-
-	/**
-	 * @return string
-	 */
-	public function getKeyName();
-
-	/**
-	 * @param string $name
-	 *
-	 * @return $this
-	 */
-	public function setName($name);
-
-	/**
-	 * @return string
-	 */
-	public function getName();
 
 	/**
 	 * @param string $comment

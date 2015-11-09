@@ -36,51 +36,41 @@ class RolesModel implements Permissions\Models\IRolesModel
 	 */
 	public function findAll()
 	{
-		$guest = (new Permissions\Entities\Role)
-			->setKeyName(Entities\IRole::ROLE_ANONYMOUS)
-			->setName('Guest')
+		$guest = (new Permissions\Entities\Role(Entities\IRole::ROLE_ANONYMOUS))
 			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 			]);
 
-		$authenticated = (new Permissions\Entities\Role)
-			->setKeyName(Entities\IRole::ROLE_AUTHENTICATED)
-			->setName('Authenticated')
+		$authenticated = (new Permissions\Entities\Role(Entities\IRole::ROLE_AUTHENTICATED))
 			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
-		$administrator = (new Permissions\Entities\Role)
-			->setKeyName(Entities\IRole::ROLE_ADMINISTRATOR)
-			->setName('Administrator')
+		$administrator = (new Permissions\Entities\Role(Entities\IRole::ROLE_ADMINISTRATOR))
 			->setPriority(0);
 
-		$employee = (new Permissions\Entities\Role)
-			->setKeyName('employee')
+		$employee = (new Permissions\Entities\Role('employee'))
 			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
-		$sales = (new Permissions\Entities\Role)
-			->setKeyName('sales')
+		$sales = (new Permissions\Entities\Role('sales'))
 			->setPriority(0)
 			->setParent($employee);
 
-		$engineer = (new Permissions\Entities\Role)
-			->setKeyName('engineer')
+		$engineer = (new Permissions\Entities\Role('engineer'))
 			->setPriority(0)
 			->setParent($employee)
 			->setPermissions([
 				'thirdResourceName:thirdPrivilegeName',
 			]);
 
-		$backendEngineer = (new Permissions\Entities\Role)
-			->setKeyName('backend-engineer')
+		$backendEngineer = (new Permissions\Entities\Role('backend-engineer'))
 			->setPriority(0)
 			->setParent($engineer);
 

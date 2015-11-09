@@ -57,14 +57,14 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 		foreach ($roles as $role) {
 			// Assign role to application permission checker
 			$parent = $role->getParent();
-			$this->addRole($role->getKeyName(), ($parent) ? $parent->getKeyName() : NULL);
+			$this->addRole($role->getName(), ($parent) ? $parent->getName() : NULL);
 
 			// & store role in object for future use
-			$this->roles[$role->getKeyName()] = $role;
+			$this->roles[$role->getName()] = $role;
 
 			// Allow all privileges for administrator
 			if ($role->isAdministrator()) {
-				$this->allow($role->getKeyName());
+				$this->allow($role->getName());
 			}
 		}
 	}
@@ -130,7 +130,7 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 
 		foreach ($this->roles as $role) {
 			if (!$role->isAdministrator() && $role->hasPermission($permission)) {
-				$this->allow($role->getKeyName(), $resource, $privilege);
+				$this->allow($role->getName(), $resource, $privilege);
 			}
 		}
 
