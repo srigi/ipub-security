@@ -27,10 +27,10 @@ class RolesModel implements Permissions\Models\IRolesModel
 	 *  authenticated(Entities\IRole::ROLE_AUTHENTICATED)  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
 	 *  administrator(Entities\IRole::ROLE_ADMINISTRATOR)
 	 *
-	 *  user-defined-role                                  ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
-	 *  ├ user-defined-child-role
-	 *  └ user-defined-inherited-role                      ---  thirdResourceName:thirdPrivilegeName
-	 *    └ user-defined-inherited-inherited-role
+	 *  Employee                                           ---  firstResourceName:firstPrivilegeName, secondResourceName:secondPrivilegeName
+	 *  ├ Sales
+	 *  └ Engineer                                         ---  thirdResourceName:thirdPrivilegeName
+	 *    └ Backend-engineer
 	 *
 	 * @return Entities\IRole[]
 	 */
@@ -58,44 +58,40 @@ class RolesModel implements Permissions\Models\IRolesModel
 			->setName('Administrator')
 			->setPriority(0);
 
-		$custom = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-role')
-			->setName('Registered in custom role')
+		$employee = (new Permissions\Entities\Role)
+			->setKeyName('employee')
 			->setPriority(0)
 			->setPermissions([
 				'firstResourceName:firstPrivilegeName',
 				'secondResourceName:secondPrivilegeName',
 			]);
 
-		$customChild = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-child-role')
-			->setName('Registered in custom role as children of another role')
+		$sales = (new Permissions\Entities\Role)
+			->setKeyName('sales')
 			->setPriority(0)
-			->setParent($custom);
+			->setParent($employee);
 
-		$customInherited = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-inherited-role')
-			->setName('Registered in custom role inheriting another role')
+		$engineer = (new Permissions\Entities\Role)
+			->setKeyName('engineer')
 			->setPriority(0)
-			->setParent($custom)
+			->setParent($employee)
 			->setPermissions([
 				'thirdResourceName:thirdPrivilegeName',
 			]);
 
-		$customInheritedInherited = (new Permissions\Entities\Role)
-			->setKeyName('user-defined-inherited-inherited-role')
-			->setName('Registered in custom role inheriting another role')
+		$backendEngineer = (new Permissions\Entities\Role)
+			->setKeyName('backend-engineer')
 			->setPriority(0)
-			->setParent($customInherited);
+			->setParent($engineer);
 
 		return [
 			$guest,
 			$authenticated,
 			$administrator,
-			$custom,
-			$customChild,
-			$customInherited,
-			$customInheritedInherited,
+			$employee,
+			$sales,
+			$engineer,
+			$backendEngineer,
 		];
 	}
 }
