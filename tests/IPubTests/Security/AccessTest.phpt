@@ -96,6 +96,22 @@ class AccessTest extends Tester\TestCase
 	}
 
 	/**
+	 * @return Nette\DI\Container
+	 */
+	protected function createContainer()
+	{
+		$config = new Nette\Configurator();
+		$config->setTempDirectory(TEMP_DIR);
+		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/presenters.neon', $config::NONE);
+
+		Security\DI\SecurityExtension::register($config);
+
+		return $config->createContainer();
+	}
+
+	/**
 	 * Set up
 	 */
 	public function setUp()
@@ -259,22 +275,6 @@ class AccessTest extends Tester\TestCase
 		$presenter->autoCanonicalize = FALSE;
 
 		return $presenter;
-	}
-
-	/**
-	 * @return \SystemContainer|\Nette\DI\Container
-	 */
-	protected function createContainer()
-	{
-		$config = new Nette\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
-
-		Security\DI\SecurityExtension::register($config);
-
-		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
-		$config->addConfig(__DIR__ . '/../config/presenters.neon', $config::NONE);
-
-		return $config->createContainer();
 	}
 }
 

@@ -46,6 +46,7 @@ class InheritanceTest extends Tester\TestCase
 	{
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
+		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
 		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 
 		Security\DI\SecurityExtension::register($config);
