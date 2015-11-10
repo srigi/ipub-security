@@ -5,7 +5,7 @@
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Permissions!
+ * @package		iPub:Security!
  * @subpackage	Security
  * @since		5.0
  *

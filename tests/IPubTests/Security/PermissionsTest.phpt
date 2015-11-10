@@ -6,7 +6,7 @@
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Permissions!
+ * @package		iPub:Security!
  * @subpackage	Tests
  * @since		5.0
  *
@@ -94,7 +94,7 @@ class PermissionsTest extends Tester\TestCase
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 
-		Security\DI\PermissionsExtension::register($config);
+		Security\DI\SecurityExtension::register($config);
 
 		return $config->createContainer();
 	}
@@ -109,7 +109,7 @@ class PermissionsTest extends Tester\TestCase
 
 		$dic = $this->createContainer();
 		$this->rolesModel = $dic->getService('models.roles');
-		$this->permission = $dic->getService('permissions.permissions');
+		$this->permission = $dic->getService('ipubSecurity.permission');
 	}
 
 

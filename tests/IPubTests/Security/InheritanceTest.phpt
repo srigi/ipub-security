@@ -6,7 +6,7 @@
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Igor Hlina http://www.srigi.sk
- * @package		iPublikuj:Permissions!
+ * @package		iPub:Security!
  * @subpackage	Tests
  * @since		5.0
  *
@@ -48,7 +48,7 @@ class InheritanceTest extends Tester\TestCase
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 
-		Security\DI\PermissionsExtension::register($config);
+		Security\DI\SecurityExtension::register($config);
 
 		return $config->createContainer();
 	}
@@ -77,7 +77,7 @@ class InheritanceTest extends Tester\TestCase
 		$dic = $this->createContainer();
 
 		$this->rolesModel = $dic->getService('models.roles');
-		$this->permission = $dic->getService('permissions.permissions');
+		$this->permission = $dic->getService('ipubSecurity.permission');
 
 		foreach ($this->dataValidPermissions() as $permission) {
 			$this->permission->addPermission($permission);

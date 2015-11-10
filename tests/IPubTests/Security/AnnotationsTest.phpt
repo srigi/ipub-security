@@ -6,7 +6,7 @@
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Permissions!
+ * @package		iPub:Security!
  * @subpackage	Tests
  * @since		5.0
  *
@@ -108,7 +108,7 @@ class AnnotationsTest extends Tester\TestCase
 		$this->rolesModel = $this->container->getService('models.roles');
 
 		// Get permissions service
-		$this->permission = $this->container->getService('permissions.permissions');
+		$this->permission = $this->container->getService('ipubSecurity.permission');
 
 		// Get presenter factory from container
 		$this->presenterFactory = $this->container->getByType('Nette\Application\IPresenterFactory');
@@ -262,7 +262,7 @@ class AnnotationsTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 
-		Security\DI\PermissionsExtension::register($config);
+		Security\DI\SecurityExtension::register($config);
 
 		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 		$config->addConfig(__DIR__ . '/../config/presenters.neon', $config::NONE);

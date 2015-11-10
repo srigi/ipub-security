@@ -6,7 +6,7 @@
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Permissions!
+ * @package		iPub:Security!
  * @subpackage	Tests
  * @since		5.0
  *
@@ -38,7 +38,7 @@ class ExtensionTest extends Tester\TestCase
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
 
-		Security\DI\PermissionsExtension::register($config);
+		Security\DI\SecurityExtension::register($config);
 
 		return $config->createContainer();
 	}
@@ -48,10 +48,10 @@ class ExtensionTest extends Tester\TestCase
 	{
 		$dic = $this->createContainer();
 
-		Assert::true($dic->getService('permissions.permissions') instanceof IPub\Security\Permission);
-		Assert::true($dic->getService('permissions.checkers.annotation') instanceof IPub\Security\Access\AnnotationChecker);
-		Assert::true($dic->getService('permissions.checkers.latte') instanceof IPub\Security\Access\LatteChecker);
-		Assert::true($dic->getService('permissions.checkers.link') instanceof IPub\Security\Access\LinkChecker);
+		Assert::true($dic->getService('ipubSecurity.permission') instanceof IPub\Security\Permission);
+		Assert::true($dic->getService('ipubSecurity.checkers.annotation') instanceof IPub\Security\Access\AnnotationChecker);
+		Assert::true($dic->getService('ipubSecurity.checkers.latte') instanceof IPub\Security\Access\LatteChecker);
+		Assert::true($dic->getService('ipubSecurity.checkers.link') instanceof IPub\Security\Access\LinkChecker);
 		Assert::true($dic->getService('models.roles') instanceof IPubTests\RolesModel);
 	}
 }

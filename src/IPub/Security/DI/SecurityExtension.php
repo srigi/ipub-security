@@ -1,11 +1,11 @@
 <?php
 /**
- * PermissionsExtension.php
+ * SecurityExtension.php
  *
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Permissions!
+ * @package		iPub:Security!
  * @subpackage	DI
  * @since		5.0
  *
@@ -18,14 +18,14 @@ use Nette;
 use Nette\DI;
 use Nette\PhpGenerator as Code;
 
-class PermissionsExtension extends DI\CompilerExtension
+class SecurityExtension extends DI\CompilerExtension
 {
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
 
 		// Application permissions
-		$builder->addDefinition($this->prefix('permissions'))
+		$builder->addDefinition($this->prefix('permission'))
 			->setClass('IPub\Security\Permission');
 
 		// Annotation access checkers
@@ -46,7 +46,7 @@ class PermissionsExtension extends DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		// Get acl permissions service
-		$service = $builder->getDefinition($this->prefix('permissions'));
+		$service = $builder->getDefinition($this->prefix('permission'));
 
 		// Check all extensions and search for permissions provider
 		foreach ($this->compiler->getExtensions() as $extension) {
@@ -70,10 +70,10 @@ class PermissionsExtension extends DI\CompilerExtension
 	 * @param Nette\Configurator $config
 	 * @param string $extensionName
 	 */
-	public static function register(Nette\Configurator $config, $extensionName = 'permissions')
+	public static function register(Nette\Configurator $config, $extensionName = 'ipubSecurity')
 	{
 		$config->onCompile[] = function (Nette\Configurator $config, Nette\DI\Compiler $compiler) use ($extensionName) {
-			$compiler->addExtension($extensionName, new PermissionsExtension());
+			$compiler->addExtension($extensionName, new self());
 		};
 	}
 }
