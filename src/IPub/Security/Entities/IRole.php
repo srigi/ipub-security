@@ -14,6 +14,7 @@
 
 namespace IPub\Security\Entities;
 
+
 interface IRole
 {
 	/**

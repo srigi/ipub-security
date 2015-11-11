@@ -1,55 +1,40 @@
 <?php
-/**
- * IPermission.php
- *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPub:Security!
- * @subpackage	Entities
- * @since		5.0
- *
- * @date		13.03.14
- */
 
 namespace IPub\Security\Entities;
 
+
 interface IPermission
 {
+	const DELIMITER = ':';
+
+
 	/**
-	 * Get permission resource
-	 *
-	 * @return string
+	 * @return IResource|NULL
 	 */
 	public function getResource();
 
+
 	/**
-	 * Get permission privilege
-	 *
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function getPrivilege();
 
+
 	/**
-	 * Set permission details like title, description, etc.
-	 *
-	 * @param array $details
-	 *
+	 * @return callable|NULL
+	 */
+	public function getAssertion();
+
+
+	/**
+	 * @param string $comment
 	 * @return $this
 	 */
-	public function setDetails(array $details);
+	public function setComment($comment);
+
 
 	/**
-	 * Get permission title
-	 *
-	 * @return string|null
+	 * @return string|NULL
 	 */
-	public function getTitle();
-
-	/**
-	 * Get permission title
-	 *
-	 * @return string|null
-	 */
-	public function getDescription();
+	public function getComment();
 }
