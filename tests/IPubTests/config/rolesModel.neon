@@ -1,2 +1,0 @@
-services:
-	models.roles: IPubTests\RolesModel
