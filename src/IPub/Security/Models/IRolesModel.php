@@ -14,13 +14,13 @@
 
 namespace IPub\Security\Models;
 
-use IPub;
-use IPub\Security;
+use IPub\Security\Entities;
+
 
 interface IRolesModel
 {
 	/**
-	 * @return Security\Entities\IRole[]
+	 * @return Entities\IRole[]
 	 */
 	public function findAll();
 }
