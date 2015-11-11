@@ -18,25 +18,22 @@ use Nette;
 use Nette\DI;
 use Nette\PhpGenerator as Code;
 
+
 class SecurityExtension extends DI\CompilerExtension
 {
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
 
-		// Application permissions
 		$builder->addDefinition($this->prefix('permission'))
 			->setClass('IPub\Security\Permission');
 
-		// Annotation access checkers
 		$builder->addDefinition($this->prefix('checkers.annotation'))
 			->setClass('IPub\Security\Access\AnnotationChecker');
 
-		// Latte access checker
 		$builder->addDefinition($this->prefix('checkers.latte'))
 			->setClass('IPub\Security\Access\LatteChecker');
 
-		// Link access checker
 		$builder->addDefinition($this->prefix('checkers.link'))
 			->setClass('IPub\Security\Access\LinkChecker');
 	}
@@ -45,23 +42,7 @@ class SecurityExtension extends DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		// Get acl permissions service
-		$service = $builder->getDefinition($this->prefix('permission'));
-
-		// Check all extensions and search for permissions provider
-		foreach ($this->compiler->getExtensions() as $extension) {
-			if (!$extension instanceof IPermissionsProvider) {
-				continue;
-			}
-
-			// Get permissions & details
-			foreach($extension->getPermissions() as $permission => $details) {
-				// Assign permission to service
-				$service->addSetup('addPermission', array($permission, $details));
-			}
-		}
-
-		// Install extension latte macros
+		// Install latte macros
 		$latteFactory = $builder->getDefinition($builder->getByType('\Nette\Bridges\ApplicationLatte\ILatteFactory') ?: 'nette.latteFactory');
 		$latteFactory->addSetup('IPub\Security\Latte\Macros::install(?->getCompiler())', array('@self'));
 	}
