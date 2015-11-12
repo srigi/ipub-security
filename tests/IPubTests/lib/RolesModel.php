@@ -24,6 +24,7 @@ class RolesModel extends Nette\Object implements Security\Models\IRolesModel
 	 *  ├ sales
 	 *  └ engineer
 	 *    └ backend-engineer
+	 *  auditor
 	 *
 	 * Here are also role permission assigned, see the code.
 	 *
@@ -53,6 +54,10 @@ class RolesModel extends Nette\Object implements Security\Models\IRolesModel
 		$this->addRole('backend-engineer', $this->getRole('engineer'), [
 			$permissions['servers:restart'],
 			$permissions['databaseFarm:restart'],
+		]);
+
+		$this->addRole('auditor', NULL, [
+			$permissions['intranet:access'],
 		]);
 	}
 

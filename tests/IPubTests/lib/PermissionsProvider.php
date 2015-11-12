@@ -52,11 +52,14 @@ class PermissionsProvider extends Nette\Object implements Security\Models\IPermi
 		$this->addPermission($salesModule, 'update');
 
 		$servers = $this->addResource('servers', $this->getResource('intranet'));
+		$this->addPermission($servers, IAuthorizator::ALL);
 		$this->addPermission($servers, 'access');
 		$this->addPermission($servers, 'restart');
 		$this->addPermission($servers, 'powerOff');
 
 		$databaseFarm = $this->addResource('databaseFarm', $this->getResource('servers'));
+		$this->addPermission($databaseFarm, IAuthorizator::ALL);
+		$this->addPermission($databaseFarm, 'access');
 		$this->addPermission($databaseFarm, 'restart');
 		$this->addPermission($databaseFarm, 'powerOff');
 	}
