@@ -45,9 +45,9 @@ IPub\Security\DI\SecurityExtension::register($configurator);
 ### The ACL system 101
 Nette ACL system brings some terminology you should know befor continuing. First there are *resources* that one (a *role*) wants to access (*privilege*). This forms a *permission*. Example is the best teacher:
 
-**resources** - `intranet`, `serversDashboard`, `databaseServersDashboard`
+**resources** - `intranet`, `salesModule`, `serversDashboard`, `databaseServersDashboard`
 
-**roles** - `guest`, `authenticated`, `employee`, `engineer`, `admininstrator`
+**roles** - `admininstrator`, `guest`, `authenticated`, `employee`, `sales`, `engineer`
 
 **privileges** - `access`, `powerOn`, `powerOff`, `reboot`
 
@@ -57,7 +57,7 @@ Nette ACL system brings some terminology you should know befor continuing. First
 - `engineer` can `reboot` the `serversDashboard`
 - `administrator` can do `ALL` on `ALL`
 
-*resources* and *roles* can inherit from one each other and create hierarchies:
+*resources* and *roles* can inherit from each other and create hierarchies:
 
 ```
     intranet
@@ -82,7 +82,7 @@ More on this can be found in [access control](https://doc.nette.org/en/2.3/acces
 ### Creating permissions
 Permission is represented by instance of `IPub\Security\Entities\IPermission`. Such instance is providing a `IPub\Security\Entities\IResource` resource instance, a privilege (defined as string) and assertion (defined as callable). All three components of the permission are optional.
 
-This permissions definitions must be provided by service implementing `IPub\Security\Providers\IPermissionsProvider`. This library is providing such provider service you can use in your project. Or you can write your own.
+Permissions definitions must be provided by service implementing `IPub\Security\Providers\IPermissionsProvider`. Library **srigi/ipub-security** have example implementation of such provider you can use in your project. Or you can write your own.
 
 Defining set of permissions with our `PermissionsProvider` is very easy:
 
@@ -101,7 +101,8 @@ class MyPermissionsProvider extends IPub\Security\Providers\PermissionsProvider
 		$this->addPermission($salesModule, 'edit', function($acl, $role, $resource, $privilege) {
 			// ...code of permission assertion
 		});
-		...
+
+		// ... more permissions definitions
 	}
 }
 ```
@@ -191,7 +192,7 @@ This annotation instruct security system that presenter is subject to the permis
 #### `@Secured\User`
 This annotation accept value `loggedIn` or `guest`. Access to any `resource` and any `privilege` is controled only by login state of the current user.
 
---
+---
 
 Next annotations are working over `Nette\Security\User` roles assigned during login process.
 
@@ -207,7 +208,7 @@ Combination of above two - access is granted only if role have `resource: privil
 #### `@Secured\Role`
 Grand access only to specified `role`.
 
-One every place where `*_NAME` applies, you can specify multiple names separated by comma.
+On every place where `*_NAME` applies, you can specify multiple names separated by comma.
 
 ### Using in presenters, components, models, etc.
 Permission check can be performed also manually. You just need `Nette\Security\User` instance on which you call:
@@ -231,7 +232,7 @@ In latte you can use two special macros.
 {/ifAllowed}
 ```
 
-Macro **ifAllowed** is very similar to annotations definitions. You can use here one or all of available parameters: user, resource, privilege, permission or role.
+Macro `ifAllowed` is very similar to annotations definitions. You can use here one or all of available parameters: user, resource, privilege, permission or role.
 
 This macro can be also used as **n:** macro:
 
@@ -250,8 +251,9 @@ And second special macro is for links:
 Macro **n:allowedHref** is expecting only valid link and in case user doesn't have permission to that resource, link isn't displayed.
 
 ## TODO
-- check `Entities\Permission` constructor types
+- check `IPub\Security\Entities\Permission` constructor types
 - make documentation examples to be in sync w/ tests
+- tests for `IPub\Security\Providers\*`
 - latte macros tests
 - check annotations test logic
 - permissions-assertions tests/doc
