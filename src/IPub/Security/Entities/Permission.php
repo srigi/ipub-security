@@ -28,7 +28,7 @@ class Permission extends Nette\Object implements IPermission
 	 * @param string|NULL $privilege
 	 * @param callable|NULL $assertion
 	 */
-	public function __construct(Entities\IResource $resource = IAuthorizator::ALL, $privilege = IAuthorizator::ALL, callable $assertion = NULL)
+	public function __construct(Entities\IResource $resource = NULL, $privilege = NULL, callable $assertion = NULL)
 	{
 		if (!($resource instanceof Entities\IResource) && ($resource !== IAuthorizator::ALL)) {
 			new Exceptions\InvalidArgumentException('Resource must be either IResource or Nette\Security\IAuthorizator::ALL');
