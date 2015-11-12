@@ -20,12 +20,12 @@ use Nette;
 use Tester;
 use Tester\Assert;
 
-use IPub;
 use IPub\Security;
-use IPubTests;
 
 require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../lib/PermissionsProvider.php';
 require __DIR__ . '/../lib/RolesModel.php';
+
 
 class ExtensionTest extends Tester\TestCase
 {
@@ -37,7 +37,7 @@ class ExtensionTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
-		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/models.neon', $config::NONE);
 
 		Security\DI\SecurityExtension::register($config);
 
@@ -47,13 +47,12 @@ class ExtensionTest extends Tester\TestCase
 
 	public function testFunctional()
 	{
-		$dic = $this->createContainer();
+		$container = $this->createContainer();
 
-		Assert::true($dic->getService('ipubSecurity.permission') instanceof IPub\Security\Permission);
-		Assert::true($dic->getService('ipubSecurity.checkers.annotation') instanceof IPub\Security\Access\AnnotationChecker);
-		Assert::true($dic->getService('ipubSecurity.checkers.latte') instanceof IPub\Security\Access\LatteChecker);
-		Assert::true($dic->getService('ipubSecurity.checkers.link') instanceof IPub\Security\Access\LinkChecker);
-		Assert::true($dic->getService('models.roles') instanceof IPubTests\RolesModel);
+		Assert::true($container->getService('ipubSecurity.permission') instanceof Security\Permission);
+		Assert::true($container->getService('ipubSecurity.checkers.annotation') instanceof Security\Access\AnnotationChecker);
+		Assert::true($container->getService('ipubSecurity.checkers.latte') instanceof Security\Access\LatteChecker);
+		Assert::true($container->getService('ipubSecurity.checkers.link') instanceof Security\Access\LinkChecker);
 	}
 }
 

@@ -23,62 +23,27 @@ use Nette\Security as NS;
 use Tester;
 use Tester\Assert;
 
-use IPub;
 use IPub\Security;
 
 require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../lib/PermissionsProvider.php';
 require __DIR__ . '/../lib/RolesModel.php';
+
 
 class AnnotationsTest extends Tester\TestCase
 {
-	/**
-	 * @var Security\Models\IRolesModel
-	 */
-	private $rolesModel;
-
-	/**
-	 * @var Security\Permission
-	 */
+	/** @var Security\Permission */
 	private $permission;
 
-	/**
-	 * @var Nette\Application\IPresenterFactory
-	 */
+	/** @var Nette\Application\IPresenterFactory */
 	private $presenterFactory;
 
-	/**
-	 * @var \SystemContainer|\Nette\DI\Container
-	 */
-	private $container;
-
-	/**
-	 * @var NS\User
-	 */
+	/** @var NS\User */
 	private $user;
 
-	/**
-	 * @return array[]|array
-	 */
-	public function dataPermissions()
-	{
-		return [
-			['firstResourceName:firstPrivilegeName', [
-				'title'			=> 'This is first example title',
-				'description'	=> 'This is first example description'
-			]],
-			['secondResourceName:secondPrivilegeName', [
-				'title'			=> 'This is second example title',
-				'description'	=> 'This is second example description'
-			]],
-			['thirdResourceName:thirdPrivilegeName', [
-				'title'			=> 'This is third example title',
-				'description'	=> 'This is third example description'
-			]]
-		];
-	}
 
 	/**
-	 * @return array[]|array
+	 * @return array[]
 	 */
 	public function dataRegisteredUsers()
 	{
@@ -88,12 +53,17 @@ class AnnotationsTest extends Tester\TestCase
 		];
 	}
 
+
+	/**
+	 * @return array[]
+	 */
 	public function dataGuestUsers()
 	{
 		return [
 			['guest']
 		];
 	}
+
 
 	/**
 	 * @return Nette\DI\Container
@@ -103,7 +73,7 @@ class AnnotationsTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
-		$config->addConfig(__DIR__ . '/../config/rolesModel.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/models.neon', $config::NONE);
 		$config->addConfig(__DIR__ . '/../config/presenters.neon', $config::NONE);
 
 		Security\DI\SecurityExtension::register($config);
@@ -111,47 +81,52 @@ class AnnotationsTest extends Tester\TestCase
 		return $config->createContainer();
 	}
 
+
 	/**
-	 * Set up
+	 * @return Application\IPresenter
 	 */
+	protected function createPresenter()
+	{
+		// Create test presenter
+		$presenter = $this->presenterFactory->createPresenter('Test');
+		// Disable auto canonicalize to prevent redirection
+		$presenter->autoCanonicalize = FALSE;
+
+		return $presenter;
+	}
+
+
 	public function setUp()
 	{
 		parent::setUp();
 
-		$this->container = $this->createContainer();
-
-		// Get roles model services
-		$this->rolesModel = $this->container->getService('models.roles');
-
-		// Get permissions service
-		$this->permission = $this->container->getService('ipubSecurity.permission');
-
-		// Get presenter factory from container
-		$this->presenterFactory = $this->container->getByType('Nette\Application\IPresenterFactory');
-
-		// Get application user
-		$this->user = $this->container->getService('user');
+		$container = $this->createContainer();
 
 		// Create user authenticator
 		$authenticator = new Nette\Security\SimpleAuthenticator([
-			'john'	=> '123456',
-			'jane'	=> '123456',
+				'john'	=> '123456',
+				'jane'	=> '123456',
 		], [
-			'john'	=> [
-				Security\Entities\IRole::ROLE_AUTHENTICATED
-			],
-			'jane'	=> [
-				Security\Entities\IRole::ROLE_AUTHENTICATED,
-				Security\Entities\IRole::ROLE_ADMINISTRATOR
-			]
+				'john'	=> [
+						Security\Entities\IRole::ROLE_AUTHENTICATED
+				],
+				'jane'	=> [
+						Security\Entities\IRole::ROLE_AUTHENTICATED,
+						Security\Entities\IRole::ROLE_ADMINISTRATOR
+				]
 		]);
-		$this->user->setAuthenticator($authenticator);
 
-		// Register permissions
-		foreach($this->dataPermissions() as $permission) {
-			$this->permission->addPermission($permission[0], $permission[1]);
-		}
+		// Get permissions service
+		$this->permission = $container->getService('ipubSecurity.permission');
+
+		// Get presenter factory from container
+		$this->presenterFactory = $container->getByType('Nette\Application\IPresenterFactory');
+
+		// Get application user
+		$this->user = $container->getService('user');
+		$this->user->setAuthenticator($authenticator);
 	}
+
 
 	/**
 	 * @dataProvider dataRegisteredUsers
@@ -175,9 +150,10 @@ class AnnotationsTest extends Tester\TestCase
 		// Logout user
 		$this->user->logout(TRUE);
 
-		Assert::true($response instanceof Nette\Application\Responses\TextResponse );
+		Assert::true($response instanceof Application\Responses\TextResponse);
 		Assert::equal('Passed', $response->getSource());
 	}
+
 
 	/**
 	 * @dataProvider dataRegisteredUsers
@@ -201,9 +177,10 @@ class AnnotationsTest extends Tester\TestCase
 		// Logout user
 		$this->user->logout(TRUE);
 
-		Assert::true($response instanceof Nette\Application\Responses\TextResponse );
+		Assert::true($response instanceof Application\Responses\TextResponse);
 		Assert::equal('Passed', $response->getSource());
 	}
+
 
 	/**
 	 * @dataProvider dataRegisteredUsers
@@ -227,9 +204,10 @@ class AnnotationsTest extends Tester\TestCase
 		// Logout user
 		$this->user->logout(TRUE);
 
-		Assert::true($response instanceof Nette\Application\Responses\TextResponse );
+		Assert::true($response instanceof Application\Responses\TextResponse);
 		Assert::equal('Passed', $response->getSource());
 	}
+
 
 	/**
 	 * @dataProvider dataRegisteredUsers
@@ -253,27 +231,16 @@ class AnnotationsTest extends Tester\TestCase
 		// Logout user
 		$this->user->logout(TRUE);
 
-		Assert::true($response instanceof Nette\Application\Responses\TextResponse );
+		Assert::true($response instanceof Application\Responses\TextResponse);
 		Assert::equal('Passed', $response->getSource());
 	}
-
-	/**
-	 * @return Application\IPresenter
-	 */
-	protected function createPresenter()
-	{
-		// Create test presenter
-		$presenter = $this->presenterFactory->createPresenter('Test');
-		// Disable auto canonicalize to prevent redirection
-		$presenter->autoCanonicalize = FALSE;
-
-		return $presenter;
-	}
 }
+
 
 class TestPresenter extends UI\Presenter
 {
 	use Security\TPermission;
+
 
 	/**
 	 * @Secured
@@ -284,24 +251,27 @@ class TestPresenter extends UI\Presenter
 		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
 	}
 
+
 	/**
 	 * @Secured
-	 * @Secured\Resource(firstResourceName)
-	 * @Secured\Privilege(firstPrivilegeName)
+	 * @Secured\Resource(climatisation)
+	 * @Secured\Privilege(turnOn)
 	 */
 	public function renderResourcePrivilege()
 	{
 		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
 	}
 
+
 	/**
 	 * @Secured
-	 * @Secured\Permission(secondResourceName:secondPrivilegeName)
+	 * @Secured\Permission(climatisation:turnOff)
 	 */
 	public function renderPermission()
 	{
 		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
 	}
+
 
 	/**
 	 * @Secured
@@ -312,5 +282,6 @@ class TestPresenter extends UI\Presenter
 		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
 	}
 }
+
 
 \run(new AnnotationsTest());

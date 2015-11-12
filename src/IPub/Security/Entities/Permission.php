@@ -1,111 +1,104 @@
 <?php
-/**
- * Permission.php
- *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPub:Security!
- * @subpackage	Entities
- * @since		5.0
- *
- * @date		13.03.14
- */
 
 namespace IPub\Security\Entities;
 
 use Nette;
-use Nette\Utils;
+use Nette\Security\IAuthorizator;
+use IPub\Security\Entities;
+use IPub\Security\Exceptions;
 
-use IPub;
-use IPub\Security;
 
 class Permission extends Nette\Object implements IPermission
 {
-	/**
-	 * Permission resource
-	 *
-	 * @var string
-	 */
+	/** @var Entities\IResource|NULL */
 	protected $resource;
 
-	/**
-	 * Permission privilege
-	 *
-	 * @var string
-	 */
+	/** @var string|NULL */
 	protected $privilege;
 
-	/**
-	 * Permission details
-	 *
-	 * @var array
-	 */
-	protected $details = [];
+	/** @var callable|NULL */
+	protected $assertion;
+
+	/** @var string */
+	private $comment;
+
 
 	/**
-	 * @param string $resource
-	 * @param string $privilege
-	 * @param array $details
+	 * @param IResource|NULL $resource
+	 * @param string|NULL $privilege
+	 * @param callable|NULL $assertion
 	 */
-	public function __construct($resource, $privilege, $details = [])
+	public function __construct(Entities\IResource $resource = IAuthorizator::ALL, $privilege = IAuthorizator::ALL, callable $assertion = NULL)
 	{
-		$this->resource		= $resource;
-		$this->privilege	= $privilege;
-
-		// Check if permission details are provided too
-		if (!empty($details)) {
-			$this->details = Utils\ArrayHash::from($details);
+		if (!($resource instanceof Entities\IResource) && ($resource !== IAuthorizator::ALL)) {
+			new Exceptions\InvalidArgumentException('Resource must be either IResource or Nette\Security\IAuthorizator::ALL');
 		}
+
+		if (!is_string($privilege) && ($privilege !== IAuthorizator::ALL)) {
+			new Exceptions\InvalidArgumentException('Privilege must be either string or Nette\Security\IAuthorizator::ALL');
+		}
+
+		$this->resource = $resource;
+		$this->privilege = $privilege;
+		$this->assertion = $assertion;
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return IResource|NULL
 	 */
 	public function getResource()
 	{
 		return $this->resource;
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return string|NULL
 	 */
 	public function getPrivilege()
 	{
 		return $this->privilege;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setDetails(array $details)
-	{
-		$this->details = Utils\ArrayHash::from($details);
-	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return callable|NULL
 	 */
-	public function getTitle()
+	public function getAssertion()
 	{
-		return isset($this->details->title) ? $this->details->title : NULL;
+		return $this->assertion;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getDescription()
-	{
-		return isset($this->details['description']) ? $this->details['description'] : NULL;
-	}
 
 	/**
-	 * Convert permission object to string
-	 *
+	 * @param string $comment
+	 * @return $this
+	 */
+	public function setComment($comment)
+	{
+		$this->comment = $comment;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return string|NULL
+	 */
+	public function getComment()
+	{
+		return $this->comment;
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public function __toString()
 	{
-		return $this->resource . Security\Permission::DELIMITER . $this->privilege;
+		$ky = (string) $this->resource . IPermission::DELIMITER . (string) $this->privilege;
+
+		return $ky;
 	}
 }

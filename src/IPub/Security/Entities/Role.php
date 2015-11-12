@@ -14,6 +14,7 @@
 
 namespace IPub\Security\Entities;
 
+use IPub\Security\Exceptions\InvalidArgumentException;
 use Nette;
 
 
@@ -117,11 +118,17 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * @param array $permissions
+	 * @param IPermission[] $permissions
 	 * @return $this
 	 */
 	public function setPermissions(array $permissions)
 	{
+		foreach ($permissions as $permission) {
+			if (!($permission instanceof IPermission)) {
+				throw new InvalidArgumentException("Permission is not instance of IPermission");
+			}
+		}
+
 		$this->permissions = $permissions;
 
 		return $this;
