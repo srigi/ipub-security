@@ -1,6 +1,6 @@
 {
 	"name": "srigi/ipub-security",
-	"description": "ACL permissions checker for Nette Framework",
+	"description": "ACL permissions setter & checker for Nette Framework",
 	"keywords": [
 		"nette",
 		"acl",
