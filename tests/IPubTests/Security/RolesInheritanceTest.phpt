@@ -24,13 +24,13 @@ use IPub\Security;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../lib/PermissionsProvider.php';
-require __DIR__ . '/../lib/RolesModel.php';
+require __DIR__ . '/../lib/RolesProvider.php';
 
 
 class RolesInheritanceTest extends Tester\TestCase
 {
-	/** @var Security\Models\IRolesModel */
-	private $rolesModel;
+	/** @var Security\Providers\IRolesProvider */
+	private $rolesProvider;
 
 	/** @var Security\Permission */
 	private $permission;
@@ -44,7 +44,7 @@ class RolesInheritanceTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
-		$config->addConfig(__DIR__ . '/../config/models.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/providers.neon', $config::NONE);
 
 		Security\DI\SecurityExtension::register($config);
 
@@ -58,14 +58,14 @@ class RolesInheritanceTest extends Tester\TestCase
 
 		$container = $this->createContainer();
 
-		$this->rolesModel = $container->getByType('IPub\Security\Models\IRolesModel');
+		$this->rolesProvider = $container->getByType('IPub\Security\Providers\IRolesProvider');
 		$this->permission = $container->getService('ipubSecurity.permission');
 	}
 
 
-	public function testRolesModelHierarchy()
+	public function testRolesProviderHierarchy()
 	{
-		$roles = $this->rolesModel->findAll();
+		$roles = $this->rolesProvider->findAll();
 
 		Assert::null($roles['guest']->getParent(), '"guest" does not have parent');
 		Assert::count(1, $roles['guest']->getChildren(), '"guest" does have one children');

@@ -1,6 +1,6 @@
 <?php
 /**
- * IRolesModel.php
+ * IRolesProvider.php
  *
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
@@ -12,12 +12,12 @@
  * @date		10.10.14
  */
 
-namespace IPub\Security\Models;
+namespace IPub\Security\Providers;
 
 use IPub\Security\Entities;
 
 
-interface IRolesModel
+interface IRolesProvider
 {
 	/**
 	 * @return Entities\IRole[]

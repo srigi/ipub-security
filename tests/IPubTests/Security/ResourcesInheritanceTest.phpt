@@ -11,7 +11,7 @@ use IPub\Security;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../lib/PermissionsProvider.php';
-require __DIR__ . '/../lib/RolesModel.php';
+require __DIR__ . '/../lib/RolesProvider.php';
 
 
 class ResourcesInheritanceTest extends Tester\TestCase
@@ -30,7 +30,7 @@ class ResourcesInheritanceTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
-		$config->addConfig(__DIR__ . '/../config/models.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/providers.neon', $config::NONE);
 
 		Security\DI\SecurityExtension::register($config);
 

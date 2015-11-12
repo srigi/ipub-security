@@ -1,6 +1,6 @@
 <?php
 
-namespace IPub\Security\Models;
+namespace IPub\Security\Providers;
 
 use IPub\Security\Entities;
 

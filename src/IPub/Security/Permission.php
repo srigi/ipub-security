@@ -15,20 +15,20 @@
 namespace IPub\Security;
 
 use IPub\Security\Entities;
-use IPub\Security\Models;
+use IPub\Security\Providers;
 use Nette\Security as NS;
 
 
 class Permission extends NS\Permission implements NS\IAuthorizator
 {
 	/**
-	 * @param Models\IPermissionsProvider $permissionsProvider
-	 * @param Models\IRolesModel $rolesModel
+	 * @param Providers\IPermissionsProvider $permissionsProvider
+	 * @param Providers\IRolesProvider $rolesProvider
 	 */
-	public function __construct(Models\IPermissionsProvider $permissionsProvider, Models\IRolesModel $rolesModel)
+	public function __construct(Providers\IPermissionsProvider $permissionsProvider, Providers\IRolesProvider $rolesProvider)
 	{
 		$resources = $permissionsProvider->getResources();  /** @var Entities\IResource[] $resources */
-		$roles = $rolesModel->findAll();                    /** @var Entities\IRole[] $roles */
+		$roles = $rolesProvider->findAll();                 /** @var Entities\IRole[] $roles */
 
 		// Register resources into Nette\Security\Permission
 		foreach ($resources as $resource) {

@@ -1,3 +1,3 @@
 services:
 	- IPubTests\PermissionsProvider
-	- IPubTests\RolesModel
+	- IPubTests\RolesProvider
