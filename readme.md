@@ -1,6 +1,6 @@
 # srigi/ipub-security
 
-[![Build Status](https://travis-ci.org/srigi/ipub-security.svg?branch=master?style=flat-square)](https://github.com/srigi/ipub-security)
+[![Build Status](https://travis-ci.org/srigi/ipub-security.svg?branch=master?style=flat-square)](https://travis-ci.org/srigi/ipub-security)
 [![Latest Stable Version](https://img.shields.io/packagist/v/srigi/ipub-security.svg?style=flat-square)](https://packagist.org/packages/srigi/ipub-security)
 [![Composer Downloads](https://img.shields.io/packagist/dt/srigi/ipub-security.svg?style=flat-square)](https://packagist.org/packages/srigi/ipub-security)
 
