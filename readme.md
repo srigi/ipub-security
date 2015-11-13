@@ -9,7 +9,7 @@ ACL permissions setter & checker for [Nette Framework](http://nette.org/).
 `srigi/ipub-security` is a library that allows easy configuration of Nette&nbsp;Framework ACL system. It supports roles & resources inheritance and also permission assertions are supported.
 
 ## Installation
-The best way to install `srigi/ipub-security` is by using [Composer](http://getcomposer.org/). To get the latest version of the library run this comment at the root of your project:
+The best way to install `srigi/ipub-security` is by using [Composer](http://getcomposer.org/). To get the latest version of the library run this command at the root of your project:
 
 ```
 $ composer require srigi/ipub-security
@@ -20,7 +20,7 @@ Or you can specify dependency by hand:
 ```json
 {
 	"require": {
-		"srigi/ipub-security": "^1.2.0"
+		"srigi/ipub-security": "^1.3.0"
 	}
 }
 ```
