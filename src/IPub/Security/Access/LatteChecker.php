@@ -175,7 +175,7 @@ class LatteChecker extends Nette\Object implements IChecker
 
 			foreach($permissions as $permission) {
 				// Parse resource & privilege from permission
-				list($resource, $privilege) = explode(Security\Permission::DELIMITER, $permission);
+				list($resource, $privilege) = explode(Security\Entities\IPermission::DELIMITER, $permission);
 
 				// Remove white spaces
 				$resource	= Utils\Strings::trim($resource);
