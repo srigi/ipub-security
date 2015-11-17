@@ -15,11 +15,11 @@ class RolesProvider extends Nette\Object implements IRolesProvider
 
 	/**
 	 * @param $roleName
-	 * @param Entities\IRole|NULL $parent
+	 * @param Entities\IRole|Entities\IRole[]|NULL $parents
 	 * @param null $permissions
 	 * @return Entities\Role
 	 */
-	public function addRole($roleName, Entities\IRole $parent = NULL, $permissions = NULL)
+	public function addRole($roleName, $parents = NULL, $permissions = NULL)
 	{
 		if (array_key_exists($roleName, $this->roles)) {
 			throw new Exceptions\InvalidStateException("Role \"$roleName\" has been already added");
@@ -30,7 +30,7 @@ class RolesProvider extends Nette\Object implements IRolesProvider
 		}
 
 		$role = new Entities\Role($roleName);
-		if ($parent) $role->setParent($parent);
+		if ($parents) $role->setParents($parents);
 		if ($permissions) $role->setPermissions($permissions);
 
 		$this->roles[$roleName] = $role;

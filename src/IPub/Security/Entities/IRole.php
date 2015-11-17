@@ -45,16 +45,16 @@ interface IRole
 	public function getName();
 
 	/**
-	 * @param IRole $parent
+	 * @param IRole[] $parents
 	 *
 	 * @return $this
 	 */
-	public function setParent(IRole $parent);
+	public function setParents($parents);
 
 	/**
-	 * @return IRole
+	 * @return IRole[]|NULL
 	 */
-	public function getParent();
+	public function getParents();
 
 	/**
 	 * @return IRole[]

@@ -38,8 +38,13 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 
 		// Register roles into Nette\Security\Permission & setup role permissions
 		foreach ($roles as $role) {
-			$roleParent = $role->getParent();
-			$this->addRole($role->getName(), ($roleParent) ? $roleParent->getName() : NULL);
+			$roleParents = $role->getParents();
+			if (is_array($roleParents)) {
+				$roleParents = array_map(function($parent) {  /** @var Entities\IRole $parent */
+					return $parent->getName();
+				}, $roleParents);
+			}
+			$this->addRole($role->getName(), $roleParents);
 
 			// Allow all privileges for administrator
 			if ($role->isAdministrator()) {

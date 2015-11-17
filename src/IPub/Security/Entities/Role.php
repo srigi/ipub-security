@@ -28,7 +28,7 @@ class Role extends Nette\Object implements IRole
 	/**
 	 * @var IRole
 	 */
-	protected $parent;
+	protected $parents;
 
 	/**
 	 * @var IRole[]
@@ -63,23 +63,29 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
-	 * @param IRole $parent
+	 * @param IRole[] $parents
 	 * @return $this
 	 */
-	public function setParent(IRole $parent)
+	public function setParents($parents)
 	{
-		$this->parent = $parent;
-		$parent->addChildren($this);
+		if (!is_array($parents)) {
+			$parents = array($parents);
+		}
+
+		$this->parents = $parents;
+		foreach ($parents as $parent) {
+			$parent->addChildren($this);
+		}
 
 		return $this;
 	}
 
 	/**
-	 * @return IRole
+	 * @return IRole[]|NULL
 	 */
-	public function getParent()
+	public function getParents()
 	{
-		return $this->parent;
+		return $this->parents;
 	}
 
 	/**
