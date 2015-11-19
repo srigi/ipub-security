@@ -168,19 +168,13 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	{
 		// Check if element has @Secured\Permission annotation
 		if ($element->hasAnnotation('Secured\Permission')) {
-			$permissions = (array) $element->getAnnotation('Secured\Permission');
+			$permission = $element->getAnnotation('Secured\Permission');
+			list($resource, $privilege) = explode(Security\Entities\IPermission::DELIMITER, $permission);
+			$resource = Utils\Strings::trim($resource);
+			$privilege = Utils\Strings::trim($privilege);
 
-			foreach($permissions as $permission) {
-				// Parse resource & privilege from permission
-				list($resource, $privilege) = explode(Security\Entities\IPermission::DELIMITER, $permission);
-
-				// Remove white spaces
-				$resource	= Utils\Strings::trim($resource);
-				$privilege	= Utils\Strings::trim($privilege);
-
-				if ($this->user->isAllowed($resource, $privilege)) {
-					return TRUE;
-				}
+			if ($this->user->isAllowed($resource, $privilege)) {
+				return TRUE;
 			}
 
 			return FALSE;
