@@ -32,8 +32,9 @@ trait TPermission
 	 */
 	protected $requirementsChecker;
 
+
 	/**
-	 * @param Security\Permission $permission
+	 * @param Permission $permission
 	 * @param Access\ICheckRequirements $requirementsChecker
 	 */
 	public function injectPermission(
@@ -44,17 +45,31 @@ trait TPermission
 		$this->requirementsChecker	= $requirementsChecker;
 	}
 
+
 	/**
 	 * @param $element
-	 *
 	 * @throws Application\ForbiddenRequestException
 	 */
 	public function checkRequirements($element)
 	{
-		parent::checkRequirements($element);
+		$redirectUrl = $this->permission->getRedirectUrl();
+
+		try {
+			parent::checkRequirements($element);
+		} catch(Application\ForbiddenRequestException $e) {
+			if ($redirectUrl) {
+				$this->presenter->redirect($redirectUrl);
+			} else {
+				throw $e;
+			}
+		}
 
 		if (!$this->requirementsChecker->isAllowed($element)) {
-			throw new Application\ForbiddenRequestException;
+			if ($redirectUrl) {
+				$this->presenter->redirect($redirectUrl);
+			} else {
+				throw new Application\ForbiddenRequestException;
+			}
 		}
 	}
 }
