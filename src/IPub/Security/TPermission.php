@@ -32,16 +32,22 @@ trait TPermission
 	 */
 	protected $requirementsChecker;
 
+	/** @var Security\Access\AnnotationChecker $annotationChecker */
+	protected $annotationChecker;
+
 	/**
-	 * @param Security\Permission $permission
+	 * @param Permission $permission
 	 * @param Access\ICheckRequirements $requirementsChecker
+	 * @param Access\AnnotationChecker $annotationChecker
 	 */
 	public function injectPermission(
 		Security\Permission $permission,
-		Access\ICheckRequirements $requirementsChecker
+		Access\ICheckRequirements $requirementsChecker,
+		Security\Access\AnnotationChecker $annotationChecker
 	) {
 		$this->permission			= $permission;
 		$this->requirementsChecker	= $requirementsChecker;
+		$this->annotationChecker    = $annotationChecker;
 	}
 
 	/**
@@ -52,6 +58,10 @@ trait TPermission
 	public function checkRequirements($element)
 	{
 		parent::checkRequirements($element);
+		
+		if (!$this->requirementsChecker->isAllowed($element) && $this->annotationChecker->checkLoginRedirect($element)) {
+			$this->presenter->redirect($this->presenter->loginUrl);
+		}
 
 		if (!$this->requirementsChecker->isAllowed($element)) {
 			throw new Application\ForbiddenRequestException;

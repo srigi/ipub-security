@@ -183,6 +183,17 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 		return TRUE;
 	}
 
+
+	/**
+	 * @param \Reflector $element
+	 * @return bool
+	 */
+	public function checkLoginRedirect(\Reflector $element)
+	{
+		return $element->hasAnnotation('Secured\LoginRedirect') ? TRUE : FALSE;
+	}
+
+
 	/**
 	 * @param \Reflector $element
 	 *
