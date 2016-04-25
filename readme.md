@@ -208,6 +208,30 @@ Combination of above two - access is granted only if role have `resource: privil
 #### `@Secured\Role`
 Grand access only to specified `role`.
 
+#### `@Secured\LoginRedirect`
+Redirect to login page if role is not allowed
+You have to setup your `$loginUrl` in your `BasePresenter` for example:
+
+```php
+**
+ * Base presenter for all application presenters.
+ */
+abstract class BasePresenter extends Nette\Application\UI\Presenter
+{
+	/** @var string $loginUrl */
+	public $loginUrl = ':Auth:Login:';
+```
+
+Or if you use `decorator` set-up your `$loginUrl` via `decorator`:
+
+```
+decorator:
+  App\Presenters\BasePresenter:
+    setup:
+      - $loginUrl(%loginUrl%)
+```
+
+
 On every place where `*_NAME` applies, you can specify multiple names separated by comma.
 
 ### Using in presenters, components, models, etc.
