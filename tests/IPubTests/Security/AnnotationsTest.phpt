@@ -234,6 +234,33 @@ class AnnotationsTest extends Tester\TestCase
 		Assert::true($response instanceof Application\Responses\TextResponse);
 		Assert::equal('Passed', $response->getSource());
 	}
+
+
+    /**
+     * @dataProvider dataRegisteredUsers
+     *
+     * @param string $username
+     * @param string $password
+     */
+	public function checkLoginRedirect($username, $password)
+	{
+	    // Create test presenter
+        $presenter = $this->createPresenter();
+
+       	// Try to login user
+        $this->user->login($username, $password);
+
+        // Create GET request
+        $request = new Application\Request('Test', 'GET', array('action' => 'redirect'));
+        // & fire presenter & catch response
+        $response = $presenter->run($request);
+
+        // Logout user
+        $this->user->logout(TRUE);
+
+        Assert::true($response instanceof Application\Responses\TextResponse);
+        Assert::equal('Passed', $response->getSource());
+	}
 }
 
 
@@ -241,6 +268,7 @@ class TestPresenter extends UI\Presenter
 {
 	use Security\TPermission;
 
+    public $loginUrl = 'Test:login';
 
 	/**
 	 * @Secured
@@ -280,6 +308,22 @@ class TestPresenter extends UI\Presenter
 	public function renderRole()
 	{
 		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
+	}
+
+
+	/**
+	* @Secured
+	* @Secured\LoginRedirect
+	*/
+	public function renderRedirect()
+	{
+		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
+	}
+
+
+	public function renderLogin()
+	{
+        $this->sendResponse(new Application\Responses\TextResponse('Passed'));
 	}
 }
 
