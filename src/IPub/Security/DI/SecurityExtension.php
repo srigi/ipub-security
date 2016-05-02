@@ -24,9 +24,13 @@ class SecurityExtension extends DI\CompilerExtension
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
 
-		$builder->addDefinition($this->prefix('permission'))
+		$def = $builder->addDefinition($this->prefix('permission'))
 			->setClass('IPub\Security\Permission');
+		if (array_key_exists('redirectUrl', $config)) {
+			$def->addSetup('setRedirectUrl', [$config['redirectUrl']]);
+		}
 
 		$builder->addDefinition($this->prefix('checkers.annotation'))
 			->setClass('IPub\Security\Access\AnnotationChecker');

@@ -21,6 +21,9 @@ use Nette\Security as NS;
 
 class Permission extends NS\Permission implements NS\IAuthorizator
 {
+	/** @var string */
+	private $redirectUrl;
+
 	/**
 	 * @param Providers\IPermissionsProvider $permissionsProvider
 	 * @param Providers\IRolesProvider $rolesProvider
@@ -58,5 +61,23 @@ class Permission extends NS\Permission implements NS\IAuthorizator
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * @param string $url
+	 */
+	public function setRedirectUrl($url)
+	{
+		$this->redirectUrl = $url;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getRedirectUrl()
+	{
+		return $this->redirectUrl;
 	}
 }
