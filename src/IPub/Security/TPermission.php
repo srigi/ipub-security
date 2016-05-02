@@ -58,7 +58,9 @@ trait TPermission
 			parent::checkRequirements($element);
 		} catch(Application\ForbiddenRequestException $e) {
 			if ($redirectUrl) {
-				$this->presenter->redirect($redirectUrl);
+				$this->getPresenter()->redirect($redirectUrl, array(
+					'backlink' => $this->storeRequest(),
+				));
 			} else {
 				throw $e;
 			}
@@ -66,7 +68,9 @@ trait TPermission
 
 		if (!$this->requirementsChecker->isAllowed($element)) {
 			if ($redirectUrl) {
-				$this->presenter->redirect($redirectUrl);
+				$this->getPresenter()->redirect($redirectUrl, array(
+					'backlink' => $this->storeRequest(),
+				));
 			} else {
 				throw new Application\ForbiddenRequestException;
 			}

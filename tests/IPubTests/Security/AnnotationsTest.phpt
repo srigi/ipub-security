@@ -75,10 +75,15 @@ class AnnotationsTest extends Tester\TestCase
 		$config->addConfig(__DIR__ . '/../config/application.neon', $config::NONE);
 		$config->addConfig(__DIR__ . '/../config/presenters.neon', $config::NONE);
 		$config->addConfig(__DIR__ . '/../config/providers.neon', $config::NONE);
+		$config->addConfig(__DIR__ . '/../config/security.neon', $config::NONE);
 
 		Security\DI\SecurityExtension::register($config);
 
-		return $config->createContainer();
+		$container = $config->createContainer();
+		$router = $container->getService('router');
+		$router[] = new Application\Routers\Route('<presenter>/<action>', 'Default:default');
+
+		return $container;
 	}
 
 
@@ -242,24 +247,25 @@ class AnnotationsTest extends Tester\TestCase
      * @param string $username
      * @param string $password
      */
-	public function testLoginRedirect($username, $password)
+	public function testRedirect($username, $password)
 	{
 	    // Create test presenter
         $presenter = $this->createPresenter();
 
-       	// Try to login user
-        $this->user->login($username, $password);
-
-        // Create GET request
-        $request = new Application\Request('Test', 'GET', array('action' => 'redirect'));
-        // & fire presenter & catch response
+        $request = new Application\Request('Test', 'GET', array('action' => 'mustBeLogged'));
         $response = $presenter->run($request);
 
-        // Logout user
-        $this->user->logout(TRUE);
+        Assert::true($response instanceof Application\Responses\RedirectResponse);
+        Assert::contains('login', $response->getUrl());
+        Assert::contains('backlink', $response->getUrl());
+
+		$presenter->user->login($username, $password);
+        $response = $presenter->run($request);
 
         Assert::true($response instanceof Application\Responses\TextResponse);
-        Assert::equal('Passed', $response->getSource());
+        Assert::contains('MustBeLogged', $response->getSource());
+
+		$presenter->user->logout(TRUE);
 	}
 }
 
@@ -310,18 +316,17 @@ class TestPresenter extends UI\Presenter
 
 
 	/**
-	* @Secured
-	* @Secured\LoginRedirect
-	*/
-	public function renderRedirect()
+	 * @User(loggedIn)
+	 */
+	public function renderMustBeLogged()
 	{
-		$this->sendResponse(new Application\Responses\TextResponse('Passed'));
+		$this->sendResponse(new Application\Responses\TextResponse('MustBeLogged'));
 	}
 
 
 	public function renderLogin()
 	{
-        $this->sendResponse(new Application\Responses\TextResponse('Passed'));
+        $this->sendResponse(new Application\Responses\TextResponse('Login'));
 	}
 }
 
