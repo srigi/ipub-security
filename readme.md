@@ -251,9 +251,9 @@ And second special macro is for links:
 Macro **n:allowedHref** is expecting only valid link and in case user doesn't have permission to that resource, link isn't displayed.
 
 ## Redirect to login page
-If user is not logged-in and tries to access secured resource a default action is throwing the `Nette\Application\ForbiddenRequestException`. However if you configure so called `redirectUrl`, request will be redirected to this url (login page) when this situation occurs. Also all parameters of the original request will be stored. That way, if you are able to restore original request and be redirected to secured resource after successful login.
+If user is not logged-in and tries to access secured resource a default action is throwing the&nbsp;`Nette\Application\ForbiddenRequestException`. However if you configure so called `redirectUrl`, request will be redirected to this url (login page) when this situation occurs.
 
-To configure `redirectUrl` add this to your configuration
+Also all parameters of the original request will be stored. That way you are able to restore original request and be redirected to secured resource after successful login. To configure `redirectUrl` add this to your configuration:
 
 ```
 permission:
