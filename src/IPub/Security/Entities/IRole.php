@@ -90,6 +90,13 @@ interface IRole
 	public function addPermission($permission);
 
 	/**
+	 * Remove one specific permission from the role
+	 *
+	 * @param string $permission
+	 */
+	public function removePermission($permission);
+
+	/**
 	 * Clear all role permissions
 	 *
 	 * @return $this

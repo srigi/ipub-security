@@ -152,6 +152,20 @@ class Role extends Nette\Object implements IRole
 	}
 
 	/**
+	 * @param string $permission
+	 */
+	public function removePermission($permission)
+	{
+		if (!in_array($permission, $this->permissions)) {
+			throw new InvalidArgumentException("Permission \"$permission\" cannot be removed since it is not associated with the role");
+		}
+
+		$this->permissions = array_filter($this->permissions, function ($p) use ($permission) {
+			return (string) $p !== $permission;
+		});
+	}
+
+	/**
 	 * @return $this
 	 */
 	public function clearPermissions()
