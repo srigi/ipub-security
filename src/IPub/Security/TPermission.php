@@ -14,22 +14,16 @@
 
 namespace IPub\Security;
 
-use Nette;
 use Nette\Application;
-
-use IPub;
 use IPub\Security;
+
 
 trait TPermission
 {
-	/**
-	 * @var Security\Permission
-	 */
+	/** @var Security\Permission */
 	protected $permission;
 
-	/**
-	 * @var Access\ICheckRequirements
-	 */
+	/** @var Access\ICheckRequirements */
 	protected $requirementsChecker;
 
 
@@ -37,12 +31,11 @@ trait TPermission
 	 * @param Permission $permission
 	 * @param Access\ICheckRequirements $requirementsChecker
 	 */
-	public function injectPermission(
-		Security\Permission $permission,
-		Access\ICheckRequirements $requirementsChecker
-	) {
-		$this->permission			= $permission;
-		$this->requirementsChecker	= $requirementsChecker;
+	public function injectPermission(Security\Permission $permission,
+	                                 Access\ICheckRequirements $requirementsChecker)
+	{
+		$this->permission = $permission;
+		$this->requirementsChecker = $requirementsChecker;
 	}
 
 
@@ -56,23 +49,17 @@ trait TPermission
 
 		try {
 			parent::checkRequirements($element);
-		} catch(Application\ForbiddenRequestException $e) {
+			if (!$this->requirementsChecker->isAllowed($element)) {
+				throw new Application\ForbiddenRequestException();
+			}
+		}
+		catch(Application\ForbiddenRequestException $e) {
 			if ($redirectUrl) {
 				$this->getPresenter()->redirect($redirectUrl, array(
 					'backlink' => $this->storeRequest(),
 				));
 			} else {
 				throw $e;
-			}
-		}
-
-		if (!$this->requirementsChecker->isAllowed($element)) {
-			if ($redirectUrl) {
-				$this->getPresenter()->redirect($redirectUrl, array(
-					'backlink' => $this->storeRequest(),
-				));
-			} else {
-				throw new Application\ForbiddenRequestException;
 			}
 		}
 	}
