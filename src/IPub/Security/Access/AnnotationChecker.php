@@ -16,6 +16,7 @@ namespace IPub\Security\Access;
 
 use Nette;
 use Nette\Utils;
+use Nette\Application\UI;
 use Nette\Security as NS;
 
 use IPub;
@@ -56,7 +57,7 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	}
 
 	/**
-	 * @param \Reflector $element
+	 * @param UI\ComponentReflection|UI\MethodReflection|Nette\Reflection\ClassType|Nette\Reflection\Method|\Reflector $element
 	 *
 	 * @return bool
 	 *
@@ -70,19 +71,19 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 			$user = $element->getAnnotation('Secured\User');
 
 			// Annotation is single string
-			if (is_string($user)) {
+			if (is_string($user) && in_array($user, ['loggedIn', 'guest'], TRUE)) {
 				// User have to be logged in and is not
-				if ($user == 'loggedIn' && !$this->user->isLoggedIn()) {
+				if ($user === 'loggedIn' && $this->user->isLoggedIn() === FALSE) {
 					return FALSE;
 
-				// User have to be logged out and is logged in
-				} else if ($user == 'guest' && $this->user->isLoggedIn()) {
+					// User have to be logged out and is logged in
+				} elseif ($user === 'guest' && $this->user->isLoggedIn() === TRUE) {
 					return FALSE;
 				}
 
-			// Annotation have multiple definitions
+				// Annotation have wrong definition
 			} else {
-				throw new Exceptions\InvalidArgumentException('In @Security\User annotation are allowed only two strings: \'loggedIn\' & \'guest\'');
+				throw new Exceptions\InvalidArgumentException('In @Security\User annotation is allowed only one from two strings: \'loggedIn\' & \'guest\'');
 			}
 
 			return TRUE;
@@ -92,7 +93,7 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	}
 
 	/**
-	 * @param \Reflector $element
+	 * @param UI\ComponentReflection|UI\MethodReflection|Nette\Reflection\ClassType|Nette\Reflection\Method|\Reflector $element
 	 *
 	 * @return bool
 	 *
@@ -102,16 +103,17 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	{
 		// Check if element has @Security\Resource annotation & @Secured\Privilege annotation
 		if ($element->hasAnnotation('Secured\Resource')) {
-			$resources	= (array) $element->getAnnotation('Secured\Resource');
-			$privileges	= $element->hasAnnotation('Secured\Privilege') ? (array) $element->getAnnotation('Secured\Privilege') : [];
+			$resources = $this->getElementAttribute($element, 'Secured\Resource');
 
 			if (count($resources) != 1) {
 				throw new Exceptions\InvalidStateException('Invalid resources count in @Security\Resource annotation!');
 			}
 
+			$privileges = $this->getElementAttribute($element, 'Secured\Privilege');
+
 			foreach ($resources as $resource) {
-				if (count($privileges)) {
-					foreach($privileges as $privilege) {
+				if ($privileges !== FALSE) {
+					foreach ($privileges as $privilege) {
 						if ($this->user->isAllowed($resource, $privilege)) {
 							return TRUE;
 						}
@@ -131,7 +133,7 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	}
 
 	/**
-	 * @param \Reflector $element
+	 * @param UI\ComponentReflection|UI\MethodReflection|Nette\Reflection\ClassType|Nette\Reflection\Method|\Reflector $element
 	 *
 	 * @return bool
 	 *
@@ -141,13 +143,18 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	{
 		// Check if element has @Secured\Privilege annotation & hasn't @Secured\Resource annotation
 		if (!$element->hasAnnotation('Secured\Resource') && $element->hasAnnotation('Secured\Privilege')) {
-			$privileges = (array) $element->getAnnotation('Secured\Privilege');
+			$privileges = $this->getElementAttribute($element, 'Secured\Privilege');
 
 			if (count($privileges) != 1) {
 				throw new Exceptions\InvalidStateException('Invalid privileges count in @Security\Privilege annotation!');
 			}
 
 			foreach($privileges as $privilege) {
+				// Check if privilege name is defined
+				if ($privilege === TRUE) {
+					continue;
+				}
+
 				if ($this->user->isAllowed(NS\IAuthorizator::ALL, $privilege)) {
 					return TRUE;
 				}
@@ -160,7 +167,7 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	}
 
 	/**
-	 * @param \Reflector $element
+	 * @param UI\ComponentReflection|UI\MethodReflection|Nette\Reflection\ClassType|Nette\Reflection\Method|\Reflector $element
 	 *
 	 * @return bool
 	 */
@@ -168,13 +175,24 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	{
 		// Check if element has @Secured\Permission annotation
 		if ($element->hasAnnotation('Secured\Permission')) {
-			$permission = $element->getAnnotation('Secured\Permission');
-			list($resource, $privilege) = explode(Security\Entities\IPermission::DELIMITER, $permission);
-			$resource = Utils\Strings::trim($resource);
-			$privilege = Utils\Strings::trim($privilege);
+			$permissions = $this->getElementAttribute($element, 'Secured\Permission');
 
-			if ($this->user->isAllowed($resource, $privilege)) {
-				return TRUE;
+			foreach ($permissions as $permission) {
+				// Check if parameters are defined
+				if ($permission === TRUE) {
+					continue;
+				}
+
+				// Parse resource & privilege from permission
+				list($resource, $privilege) = explode(Security\Entities\IPermission::DELIMITER, $permission);
+
+				// Remove white spaces
+				$resource = Utils\Strings::trim($resource);
+				$privilege = Utils\Strings::trim($privilege);
+
+				if ($this->user->isAllowed($resource, $privilege)) {
+					return TRUE;
+				}
 			}
 
 			return FALSE;
@@ -184,7 +202,7 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	}
 
 	/**
-	 * @param \Reflector $element
+	 * @param UI\ComponentReflection|UI\MethodReflection|Nette\Reflection\ClassType|Nette\Reflection\Method|\Reflector $element
 	 *
 	 * @return bool
 	 */
@@ -192,9 +210,14 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 	{
 		// Check if element has @Secured\Role annotation
 		if ($element->hasAnnotation('Secured\Role')) {
-			$roles = (array) $element->getAnnotation('Secured\Role');
+			$roles = $this->getElementAttribute($element, 'Secured\Role');
 
 			foreach ($roles as $role) {
+				// Check if role name is defined
+				if ($role === TRUE) {
+					continue;
+				}
+
 				if ($this->user->isInRole($role)) {
 					return TRUE;
 				}
@@ -204,5 +227,22 @@ class AnnotationChecker extends Nette\Object implements IChecker, ICheckRequirem
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * @param UI\ComponentReflection|UI\MethodReflection|Nette\Reflection\ClassType|Nette\Reflection\Method|\Reflector $element
+	 * @param string $attribute
+	 *
+	 * @return array|FALSE
+	 */
+	private function getElementAttribute($element, string $attribute)
+	{
+		if (class_exists(UI\ComponentReflection::class)) {
+			return UI\ComponentReflection::parseAnnotation($element, $attribute);
+		}
+
+		$values = (array) $element->getAnnotation($attribute);
+
+		return is_array($values) ? $values : ($values ? [$values] : FALSE);
 	}
 }

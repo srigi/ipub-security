@@ -22,13 +22,12 @@ use IPub;
 use IPub\Security;
 use IPub\Security\Exceptions;
 
-
 class LatteChecker extends Nette\Object implements IChecker
 {
 	/**
 	 * @var NS\User
 	 */
-	protected $user;
+	private $user;
 
 	/**
 	 * @param NS\User $user
@@ -65,7 +64,7 @@ class LatteChecker extends Nette\Object implements IChecker
 	 *
 	 * @throws Exceptions\InvalidArgumentException
 	 */
-	protected function checkUser(Utils\ArrayHash $element)
+	private function checkUser(Utils\ArrayHash $element)
 	{
 		// Check if element has user parameter
 		if ($element->offsetExists('user')) {
@@ -73,19 +72,19 @@ class LatteChecker extends Nette\Object implements IChecker
 			$user = $element->offsetGet('user');
 
 			// Parameter is single string
-			if (is_string($user)) {
+			if (is_string($user) && in_array($user, ['loggedIn', 'guest'], TRUE)) {
 				// User have to be logged in and is not
-				if ($user == 'loggedIn' && !$this->user->isLoggedIn()) {
+				if ($user === 'loggedIn' && $this->user->isLoggedIn() === FALSE) {
 					return FALSE;
 
-				// User have to be logged out and is logged in
-				} else if ($user == 'guest' && $this->user->isLoggedIn()) {
+					// User have to be logged out and is logged in
+				} elseif ($user === 'guest' && $this->user->isLoggedIn() === TRUE) {
 					return FALSE;
 				}
 
-			// Parameter have multiple definitions
+				// Parameter have multiple definitions
 			} else {
-				throw new Exceptions\InvalidArgumentException('In parameter \'user\' are allowed only two strings: \'loggedIn\' & \'guest\'');
+				throw new Exceptions\InvalidArgumentException('In parameter \'user\' is allowed only one from two strings: \'loggedIn\' & \'guest\'');
 			}
 
 			return TRUE;
@@ -105,8 +104,8 @@ class LatteChecker extends Nette\Object implements IChecker
 	{
 		// Check if element has resource parameter & privilege parameter
 		if ($element->offsetExists('resource')) {
-			$resources	= (array) $element->offsetGet('resource');
-			$privileges	= $element->offsetExists('privilege') ? (array) $element->offsetGet('privilege') : [];
+			$resources = (array) $element->offsetGet('resource');
+			$privileges = $element->offsetExists('privilege') ? (array) $element->offsetGet('privilege') : [];
 
 			if (count($resources) != 1) {
 				throw new Exceptions\InvalidStateException('Invalid resources count in \'resource\' parameter!');
@@ -114,7 +113,7 @@ class LatteChecker extends Nette\Object implements IChecker
 
 			foreach ($resources as $resource) {
 				if (count($privileges)) {
-					foreach($privileges as $privilege) {
+					foreach ($privileges as $privilege) {
 						if ($this->user->isAllowed($resource, $privilege)) {
 							return TRUE;
 						}
@@ -144,13 +143,13 @@ class LatteChecker extends Nette\Object implements IChecker
 	{
 		// Check if element has privilege parameter & hasn't resource parameter
 		if (!$element->offsetExists('resource') && $element->offsetExists('privilege')) {
-			$privileges	= (array) $element->offsetGet('privilege');
+			$privileges = (array) $element->offsetGet('privilege');
 
 			if (count($privileges) != 1) {
 				throw new Exceptions\InvalidStateException('Invalid privileges count in \'privilege\' parameter!');
 			}
 
-			foreach($privileges as $privilege) {
+			foreach ($privileges as $privilege) {
 				if ($this->user->isAllowed(NS\IAuthorizator::ALL, $privilege)) {
 					return TRUE;
 				}
@@ -173,13 +172,13 @@ class LatteChecker extends Nette\Object implements IChecker
 		if ($element->offsetExists('permission')) {
 			$permissions = (array) $element->offsetGet('permission');
 
-			foreach($permissions as $permission) {
+			foreach ($permissions as $permission) {
 				// Parse resource & privilege from permission
 				list($resource, $privilege) = explode(Security\Entities\IPermission::DELIMITER, $permission);
 
 				// Remove white spaces
-				$resource	= Utils\Strings::trim($resource);
-				$privilege	= Utils\Strings::trim($privilege);
+				$resource = Utils\Strings::trim($resource);
+				$privilege = Utils\Strings::trim($privilege);
 
 				if ($this->user->isAllowed($resource, $privilege)) {
 					return TRUE;
@@ -215,3 +214,4 @@ class LatteChecker extends Nette\Object implements IChecker
 		return TRUE;
 	}
 }
+
