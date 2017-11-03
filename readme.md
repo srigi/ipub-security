@@ -238,7 +238,7 @@ This macro can be also used as **n:** macro:
 
 ```html
 <p>This text is for everyone...</p>
-<p n:ifAllowed resource => 'intranet', privilege => 'access'>
+<p n:ifAllowed="resource => 'intranet', privilege => 'access'">
 	But this one is only for special persons...</p>
 ```
 
