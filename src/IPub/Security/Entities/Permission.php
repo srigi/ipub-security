@@ -31,11 +31,11 @@ class Permission extends Nette\Object implements IPermission
 	public function __construct(Entities\IResource $resource = NULL, $privilege = NULL, callable $assertion = NULL)
 	{
 		if (!($resource instanceof Entities\IResource) && ($resource !== IAuthorizator::ALL)) {
-			new Exceptions\InvalidArgumentException('Resource must be either IResource or Nette\Security\IAuthorizator::ALL');
+			throw new Exceptions\InvalidArgumentException('Resource must be either IResource or Nette\Security\IAuthorizator::ALL');
 		}
 
 		if (!is_string($privilege) && ($privilege !== IAuthorizator::ALL)) {
-			new Exceptions\InvalidArgumentException('Privilege must be either string or Nette\Security\IAuthorizator::ALL');
+			throw new Exceptions\InvalidArgumentException('Privilege must be either string or Nette\Security\IAuthorizator::ALL');
 		}
 
 		$this->resource = $resource;
