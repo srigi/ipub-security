@@ -92,7 +92,7 @@ class MyPermissionsProvider extends IPub\Security\Providers\PermissionsProvider
 	public function __construct()
 	{
 		$intranet = $this->addResource('intranet');
-		$this->addPermission($intranet, Nette\Security\IAuhtorizator::ALL);
+		$this->addPermission($intranet, Nette\Security\IAuthorizator::ALL);
 		$this->addPermission($intranet, 'access');
 		$this->addPermission($intranet, 'update');
 
